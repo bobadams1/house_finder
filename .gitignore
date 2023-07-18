@@ -1,0 +1,13 @@
+.DS_Store
+Approach.md
+geckodriver.log
+.ipynb_checkpoints
+training_data/
+raw_data/
+satelite_tiles/
+aktogrammh/
+
+
+data/
+images/
+keys.py
