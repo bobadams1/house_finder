@@ -1,4 +1,12 @@
+__pycache__/
 .DS_Store
+.cache
+bin/
+build/
+dist/
+lib/
+eggs/
+
 Approach.md
 geckodriver.log
 .ipynb_checkpoints
