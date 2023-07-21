@@ -13,6 +13,8 @@ I have personally run into this on two occasions while trying to find the locati
 
 ### Methodology
 
+
+
 ## Data Sources
 
 ### Data Dictionary
@@ -24,6 +26,12 @@ I have personally run into this on two occasions while trying to find the locati
 ## Exploratory Data Analysis
 
 ## Modeling
+
+A Neural Network (likely a Convolutional Neural Network, or CNN) is best suited to the task of identifying houses and their key characteristics as of interest in this project. There are two primary approaches available: Self-Trained Model, or a Pre-Trained Model.
+
+Self Trained Models - are generally more flexible to specific tasks, but require a massive amount of training and validation data (as well as processing time) to fit model weights.
+Pre-Trained Models - have been designed and trained separately and are available for public use. Here, the input and output layers are updated, while the key hidden layers of the Network are 'frozen'
+Given the volume of training data which would be required to accurately identify houses, leveraging a pre-trained model is the likely best path for this use case. Widely available models are considered below.
 
 ### Satelite Imagery
 
