@@ -19,3 +19,7 @@ aktogrammh/
 data/
 images/
 keys.py
+
+Mask_RCNN/assets/
+Mask_RCNN/images/
+Mask_RCNN/samples

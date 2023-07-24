@@ -7,12 +7,30 @@ Several attempts to address this gap have been undertaken by overlaying the plan
 
 _***But what if you don't know the identifier and can't really find someone to ask?***_
 
-I have personally run into this on two occasions while trying to find the location of a house we were staying at in Donegal County, Ireland - and a similar experience on the Greek island of Corfu.  I had a picture of the house and a rough location, but no address.  It's not always easy to find "Tom's house, down the way from the Pub" in the dark!  To solve this issue, I found myself leveraging satelite images - identifying distinct features in images and attempting to 
+I have personally run into this on two occasions while trying to find the location of a house we were staying at in Donegal County, Ireland - and a similar experience on the Greek island of Corfu.  I had a picture of the house and a rough location, but no address.  It's not always easy to find "Tom's house, down the way from the Pub" in the dark!  To solve this issue, I found myself leveraging satelite images - identifying distinct features in images and attempting to locate the house by physical relationship.  The material (color) and shape of the roofs visible in images taken from the ground (or from inside the property) were the most consistently useful datapoints.  I took a few wrong turns, but eventually found the destination.
 
 ### Goal
+This project seeks to leverage publicly available satelite and aerial imagery of unaddressed areas to identify buildings, roof types and materials and provide users with a map narrowing down likely destinations.  In cases where the town/city designation, paired with the roof description is unique, the goal is to create a geolocation of of the building they are looking for.  Otherwise, this project seeks to reduce the number of wrong turns taken in unfamiliar, unaddressed areas.
+
+***What does this look like?***
+
+Once an area is processed, users can take the following steps to help identify their destination:
+1. Type in the name of their destination's village or town (ex. Agios Matheos)
+2. Review available images of the building and select a roof color (ex. Red Tile)
+3. Provide a best guess of the roof style, designated by the number of roof ridges (ex. one ridge)
+
+The model will then assess the aerial imagery availabe (in this implementation, sourced from Google's Earth API) to identify buildings in the specified area and return building locations (latitude and longitude) of buildings matching the provided description.
 
 ### Methodology
+This project requires the usage of a wide range of libraries and methods within the geopspatial analysis and data science disciplines.  A brief overview of the stages involved is listed below with details of the project provided in relevant sections later in this document.
 
+#### Source Aerial Imagery
+
+#### Source Training Data
+
+#### Instantiate a Pre-Trained Convolutional Neural Net
+
+#### 
 
 
 ## Data Sources
