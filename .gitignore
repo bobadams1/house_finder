@@ -15,11 +15,14 @@ raw_data/
 satelite_tiles/
 aktogrammh/
 
+code_archive.ipynb
 
 data/
 images/
 keys.py
 
-Mask_RCNN/assets/
-Mask_RCNN/images/
-Mask_RCNN/samples
+code/Mask_RCNN/assets/
+code/Mask_RCNN/images/
+code/Mask_RCNN/samples
+
+code/Mask_RCNN/
