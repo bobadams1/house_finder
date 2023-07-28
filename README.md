@@ -31,28 +31,30 @@ The model will then assess the aerial imagery availabe (in this implementation, 
 ### Methodology
 This project requires the usage of a wide range of libraries and methods within the geopspatial analysis and data science disciplines.  A brief overview of the stages involved is listed below with details of the project provided in relevant sections later in this document.
 
-##### 1. Define Geographic Boundaries
+#### 1. Define Geographic Boundaries
 Before capturing satelite images covering the Earth, setting fixed boundaries over which to search is key to capture relevant and useful images.  For this project, the Greek island of Corfu is of interest.  As Greece's 7th largest island (>610 sq. km), a secondary search area is defined by one of the island's 16 municipalities
 
 Island and relevant municipal boundaries are sourced from the Greek Government in the form of shapefiles.  These are re-projected into a common map projection and filtered to create relevant boundaries (ex. coastline) over which to search.
-For more details, see [here](####_Geographic_Boundaries).
+For more details, see [here](###-geographic-boundaries).
 
-##### 2. Source Aerial Imagery
+#### 2. Source Aerial Imagery
 Satelite Imagery is captured using Google's Earth Engine API and Google Satelite imagery.  Images are captured in two offset overlapping grids within the designated geographic boundary to maximize coverage and capture of complete buildings within individual images.  To aid in locating houses geographically, images are named with the latitude and longitude of the center of the image.
 
-For more details, see [here](####_Satelite_and_Aerial_Imagery).
+For more details, see [here](###-satelite-and-aerial-imagery).
 
-##### 3. Model Selection
+#### 3. Model Selection
+Matterport's Mask-RCNN model was selected to take advantage of a high quality, open source instance segmentation Convolutional Neural Network, and to minimize training time and resource requirements.  A version of the model upgraded for compatibility with Tensorflow versions 2+ was sourced from a branch created by Adam Kelly (aktwelve) via github and run in Google Colab.
 
-##### 4. Source and Prepare Training Data
+For more details, see [here](###-model-selection)
 
-##### 5. Instantiate a Pre-Trained Convolutional Neural Network
+#### 4. Source and Prepare Training Data
+The Spacenet V2 [dataset](https://spacenet.ai/spacenet-buildings-dataset-v2/) is leveraged as the primary training data for this project.  Specifically, the smallest dataset covering portions of Khartoum, Sudan is leveraged due to data size constraints and model fitting time requirements.  This dataset is ideal in training a model to segment instances of buildings from satelite images, as the images are of high quality and each are provided with an accompanying mask for each building in a .geojson format.  Additional datasets were sourced
 
-##### 6. Evaluate Model Outputs and Identify Roof Colors 
+For more details, see [here](###-source-and-prepare-training-data)
 
-## Data Sources
+#### 5. Instantiate a Pre-Trained Convolutional Neural Network
 
-### Data Dictionary
+#### 6. Evaluate Model Outputs and Identify Roof Colors 
 
 ---
 ## Data Sourcing and Preparation
@@ -75,6 +77,7 @@ Line segments provided in the shapefile (on the order of a kilometer in length) 
 
 Municipalities similarly cover the entirety of Greece, but names are provided for reference and filtering.  Here 'Ν. ΚΕΡΚΥΡΑΣ' (the Greek named for the island "Kerkyra") is used to filter to municipalities on the island.  The municipality of 'ΑΓΡΟΣ' (Agros) is selected to enable further segmentation of the island if needed.
 
+---
 ### Satelite and Aerial Imagery
 [Notebook](code/01_Image_Sourcing.ipynb)
 #### Sourcing
@@ -156,16 +159,84 @@ Using the above process, thousands of high quality, relevant satelite and aerial
 
 The goal of this project is to leverage the images captured above to identify instances of buildings - and details about these buildings.  For this application, a Convolutional Neural Network is the best candidate machine learning model type.  Specifically, a Convolutional Neural Network which is designed to identify one or more instances of one or more classes of object within an image.  These model
 
-> ***A brief summary of Neural and Convolutional Neural Networks***  Neural Networks are a class of machine learning model which leverages a series of layers 
+<blockquote>
+    <strong>A brief summary of Neural Networks and Convolutional Neural Networks</strong><br>  
+    <p> - Machine Learning models considers input data and known answers (training data) to iteratively learn the rules which associate the inputs and resulting answers.  These rules can then be used to predict answers from unseen data.<br><br>
+    - Neural Networks are a collection of relatively simple models (nodes) organized in successive layers to accomplish the same type of iterative learning using training data.  In most implemenetations, the nodes of each layer feed their output to successive layers in the model.  Nodes in deeper layers are not considering the input data directly, but <i>a representation of the input data generated by upstream layers</i>.  This enables Neural Networks to assess more complex relationships between the inputs and answers.<br><br>
+        - Convolutional Neural Networks introduce <i>Convolution Layers</i> to a Neural Network.  These layers enable the model to assess arrays of numbers (often images) organized in multiple dimensions.  Boiled down, Convolution Layers 'look at' a small subset of the 'image' similar to the gridwise image capture approach above and calculate ouptputs to create a new representation of the input data.  One key feature is that these layers enable the network to identify features of an input without respect to their position.  Convolutional Neural Networks are the cornerstone of computer vision in applications like image classification (cat or dog?), object detection (lines on the road in self driving cars), and instance segmentation (identifying and reading a roadsign).<br><br>
+</blockquote>
 
+<a href="https://github.com/matterport/Mask_RCNN">Mask-RCNN</a> is a pre-trained Convolutional Neural Network used for Instance Segmentation.  One guiding principle of Neural Networks is that as the rules you are attempting to learn grow in complexity, the amount of data needed to train the model increases as well.  Mask-RCNN has been trained on a range of very large datasets, which enable it to break down input images efficiently and identify instances of objects.  It can also be retrained to find new 'classes' of objects (like buildings) reasonably quickly - as the internal rules of breaking down an image have already been learned.  This makes Mask-RCNN a great model to leverage when seeking to identify individual houses from satelite imagery! <br><br>
+        Mask-RCNN's output when considering an image of a street below provides an illustration of both instance identification (individual boxes for instances of each type of object identified) and masking (the highlight overlay of the pixels that make up each object.)
+        <figure>
+            <img src=https://github.com/matterport/Mask_RCNN/raw/master/assets/street.png width=600 alt = "Matterport Mask-RCNN Street View">
+            <figcaption>Sample Mask-RCNN Output.  Credit: Matterport.  <a hreff = "https://github.com/matterport/Mask_RCNN"> Source Link</a></figcaption>
+        </figure>
 
+One note is that Mask-RCNN is not directly compatible with the current versions (2+) of the Tensorflow Library (which is used to run a wide range of neural networks, especially in Google's Colab environment).  For this project, a version of Mask-CNN upgraded to work with Tensorflow v2+ was sourced from Adam Kelly (aktwelve) <a href="https://github.com/akTwelve/Mask_RCNN">via Github</a>.  Many thanks to Adam and their collaborators for their work in ensuring this model is still usable!  Additional adjustments made to the model are listed in the Modeling section below.
 
 ---
 ### Source and Prepare Training Data
 
+[Notebook](code/04_Training_Data.ipynb)
 
+#### Sourcing
+Machine Learning models make predictions on a like-for-like basis with the answers ("targets") they were trained on.  A model asked to predict a house price will need to be trained with house prices as a target.  A model trained to identify pictures of cats vs. dogs will need to be trained on labeled images of cats and dogs (and because the task is more complex, a lot more photos.).  This project seeks to generate masks (the highlighted sections) which comprise buildings from aerial photos.  Therefore, a dataset comprised of aerial images and <i>individual building masks</i> will be required for training.  Thankfully, this data is publicly available from Spacenet.ai.
 
-## Exploratory Data Analysis
+Spacenet V2 is a publicly available dataset from [Spacenet.ai](https://spacenet.ai/about-us/).  This data is commonly used in Spacenet-operated geospatial machine learning challenges similar to those operated on kaggle.com.  The Spacenet V2 [dataset](https://spacenet.ai/spacenet-buildings-dataset-v2/) covers four cities and provides maps of category-masked images, including maps for buildings viewed from satelite photography.  This data is ideal to train a Convolutional Neural Network to identify, locate and mask individual buildings for this project.
+
+Spacenet V2 data is available for download via Amazon S3 bucket or from [Radiant MLHUB](https://mlhub.earth/data/spacenet2).  For this project, I downloaded the Khartoum dataset from Radiant MLHUB.  It is the smallest of the four available datasets, which enables faster training times in line with the time constraints for this project.  Examples of the pre-processed images are below.
+
+<blockquote>
+    <strong>A note on extended use cases:</strong><br>
+    Additional data is available from the Spacenet V2 dataset covering cities including sections of Las Vegas, Paris and Shanghai.  This data could be preprocessed and leveraged to train Mask-RCNN in combination with the Khartoum data leveraged for this project to improve accuracy of predictions across a wider range of use cases.  <br><br>
+    In addition, data is sourced from <a href = "https://github.com/loosgagnet">loosgagnet via github</a> which could also be used to refine the model and open transfer learning opportunities.  Details on three such datasets imported but not utilized in the project directly are below:<br><br> 
+    <strong>Building Detection and Roof Type Data</strong> from <a href="https://github.com/loosgagnet/Building-detection-and-roof-type-recognition">loosgagnet - Building-detection-and-roof-type-recognition</a>
+
+This dataset was created by the research team leading: [A CNN-Based Approach for Automatic Building Detection and Recognition of Roof Types Using a Single Aerial Image - Alidoost & Arefi, 2019](https://link.springer.com/article/10.1007/s41064-018-0060-5)
+
+It consists of two training datasets for the above named paper:
+1. **Building Detection** - includes three classes of urban objects such as buildings, roads and trees (4800 IR-R-G images per class, after data augmentation)
+1. **Roof-Type Detection** - includes three classes of roofs such as flat, gable and hip roofs (4800 IR-R-G images per class, after data augmentation)
+
+Citation: Fatemeh Alidoost, Hossein Arefi; “A CNN-Based Approach for Automatic Building Detection and Recognition of Roof Types Using a Single Aerial Image”, PFG – Journal of Photogrammetry, Remote Sensing and Geoinformation Science, December 2018, Volume 86, Issue 5–6, pp 235–248, https://doi.org/10.1007/s41064-018-0060-5 <br><br>
+    <strong>Roofline Extraction Dataset</strong> from <a href='https://github.com/loosgagnet/Roofline-Extraction'>loosgagnet Roofline-Extraction via Github</a>
+
+This dataset was created by the research team leading: [2D Image-To-3D Model: Knowledge-Based 3D Building Reconstruction (3DBR) Using Single Aerial Images and Convolutional Neural Networks (CNNs)]('https://doi.org/10.3390/rs11192219')
+
+It consists of cropped images, nDSMs, and roof elements including three classes of eaves (red), ridges (green) and hips (blue)<br><br>
+    <figure>
+        <img src=images/loosgagnet_roofline.png><img src = images/loosgagnet_roofline_mask.png>
+        <figcaption>loosgagnet Roofline Extraction - images processed for this project</figcaption>
+    </figure>
+
+---
+Citation: Fatemeh Alidoost, Hossein Arefi, Federico Tombari; “2D Image-To-3D Model: Knowledge-Based 3D Building Reconstruction (3DBR) Using Single Aerial Images and Convolutional Neural Networks (CNNs)”, Remote Sens. 2019, 11, 2219, [https://doi.org/10.3390/rs11192219]('https://doi.org/10.3390/rs11192219')
+</blockquote>
+
+#### Pre-Processing SpacenetV2 Data
+SpacenetV2 Data is available in tar.gz files for each city.  Once extracted, the data requires significant pre-processing before being leveraged in modeling.  Details of the cleaning process are provided below and handled sequentially in the linked [notebook](code/04_Training_Data.ipynb).  Mustafa Aktas' <a href='https://github.com/Mstfakts/Building-Detection-MaskRCNN/tree/master'>Building Detection with MaskRCNN project on github</a> was leveraged as reference on starting approaches to some of the problems tacked during data preparation and model instantiation.  Many thanks to Mustafa for blazing this trail!
+
+##### File Organization
+Initial file directories are laid out such that images and image labels are stored in separate directories for each image. Ex. img1 (multiple images) and img1-labels (geojson) are stored individually in unique directories.  Within each image file directory, there are four distinct image bands or types (all in 16 bit .tif format) MS, PAN, PS-MS, PS-RGB
+> PS-RGB format is the closest image band to the photos which will be assessed (captured via Earth Engine API above).  These are used moving forward.  PS-RGB files and associated .geojson files are moved to combined images, and labels directories, creating a single directory for images and an adjoining directory for their labels.
+
+##### File Indexes
+File names are unique, but include gaps in the indices within the source file (image and label 120-123 exist, but 124 does not.)  As these will be used to identify and select images and masks during training, a sequential and complete index list is preferable.
+> The file indices of the image files are sorted (as strings) and a 1-indexed range is created to replace these indices.  The numerical file index is leveraged to ensure the images and their labels are converted to the same new index. Ex. 1000 > 1, 1001 > 2, etc.
+
+Labels (building masks) are stored as .geojson objects - these will need to be reformatted as images for validation and leveraged to create individual building masks (arrays) for modeling (ex. Image 1, Building 1 is made up of these shaded pixels).
+> The rioxarray and rasterio libraries are leveraged to create single building masks for each image as .tif files in a maps directory.  These are later imported via the OpenCV library and saved as .png files (viewable).  Example below.  It should be noted that individual buildings are not segmented in these mask images.  They are useful for inspection and validation only.  The model will require individual masks for each building for training purposes.  These are generated in line during modeling.
+
+<figure>
+    <img src=data/training_data/spacenet_v2/images/img1002PS-RGB_.png width=400 alt="SpacenetV2 Image 1002"> <img src=data/training_data/spacenet_v2/maps/1002mask_.png width= 400 alt = 'SpacenetV2 Image 1002 Combined Mask'>
+    <figcaption>SpacenetV2 Khartoum Image 1002 and matching mask for all combined buildings (sourced from geojson)</figcaption>
+</figure>
+    
+##### Image File Types
+Image files are provided in a 16-bit .tif format.  These are not directly viewable by most systems.  A .png copy must be created for visualizaton and modeling (.png files can be converted to arrays for modeling, while .tif files cannot be converted directly).  .tif files must be retained, as the geographic metadata included in these files is key to matching the image with the geojson data in the labels when creating building-specific masks.
+> The imageio and OpenCV libraries are leveraged to open each .tif image and save a .png copy.
+
 
 ## Modeling
 
