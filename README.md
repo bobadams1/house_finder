@@ -1,13 +1,20 @@
 # Identifying Houses in Areas without Addresses - House Finder
-<p align="center">
+#### Bob Adams - July 2023
+<div style="text-align:center;">    
     <figure>
         <img src="images/iss030e254053~large.jpg" alt="Corfu Satelite" width="700"/>
         <figcaption>Photo Credit: [NASA](https://images.nasa.gov/details/iss030e254053) (ISS030-E-254053 (22 April 2012))</figcaption>
     </figure>
-</p>
+</div>
 
 
 ## Problem Statement
+<div style="text-align:center;">
+Send me a post card!<br>
+...OK, what's the address?
+</div>
+
+---
 Though common throughout most western countries and localities, unified building address systems are not universally available.  From remote communities in Africa and Ireland to [Carmel by the Sea in California]('https://ci.carmel.ca.us/post/addresses#:~:text=A%20unique%20characteristic%20of%20Carmel,houses%20south%20of%2012th%20Avenue%E2%80%9D'), _descriptive addresses_ are common and often require local knowledge to navigate.  Guiding deliveries and guests to unaddressed locations often requires providing detailed directions or providing local help, though providing a GPS location via a 'pin' in a mapping software is common in some areas.
 
 Several attempts to address this gap have been undertaken by overlaying the planet with a grid and assigning unique identifiers to grid references.  [Google's PlusCodes]('https://maps.google.com/pluscodes/') assigns alphanumeric codes, organized logically to grid space.  [what3words]('https://what3words.com/clip.apples.leap') assigns a combination of three unique words in multiple languages along a similar schema.
@@ -32,27 +39,43 @@ The model will then assess the aerial imagery availabe (in this implementation, 
 This project requires the usage of a wide range of libraries and methods within the geopspatial analysis and data science disciplines.  A brief overview of the stages involved is listed below with details of the project provided in relevant sections later in this document.
 
 #### 1. Define Geographic Boundaries
+<div style="text-align:center;">    
+    <figure>
+        <img src="images/geo_boundaries.png" alt="Geographic Boundaries"/>
+        <figcaption>Geographic Boundaries for the Island of Corfu and the Municipality of Agros</figcaption>
+    </figure>
+</div>
 Before capturing satelite images covering the Earth, setting fixed boundaries over which to search is key to capture relevant and useful images.  For this project, the Greek island of Corfu is of interest.  As Greece's 7th largest island (>610 sq. km), a secondary search area is defined by one of the island's 16 municipalities
 
 Island and relevant municipal boundaries are sourced from the Greek Government in the form of shapefiles.  These are re-projected into a common map projection and filtered to create relevant boundaries (ex. coastline) over which to search.
 For more details, see [here](###-geographic-boundaries).
 
 #### 2. Source Aerial Imagery
+<div style="text-align:center;">    
+    <figure>
+        <img src="images/zoom-in.gif">
+        <figcaption>Variable Zoom Rates.  Image Credit: Google Satelite Imagery</figcaption>
+    </figure>
+</div>
+
 Satelite Imagery is captured using Google's Earth Engine API and Google Satelite imagery.  Images are captured in two offset overlapping grids within the designated geographic boundary to maximize coverage and capture of complete buildings within individual images.  To aid in locating houses geographically, images are named with the latitude and longitude of the center of the image.
 
 For more details, see [here](###-satelite-and-aerial-imagery).
 
 #### 3. Model Selection
-Matterport's Mask-RCNN model was selected to take advantage of a high quality, open source instance segmentation Convolutional Neural Network, and to minimize training time and resource requirements.  A version of the model upgraded for compatibility with Tensorflow versions 2+ was sourced from a branch created by Adam Kelly (aktwelve) via github and run in Google Colab.
+Matterport's Mask-RCNN model is selected to take advantage of a high quality, open source instance segmentation Convolutional Neural Network, and to minimize training time and resource requirements.  A version of the model upgraded for compatibility with Tensorflow versions 2+ is sourced from a branch created by Adam Kelly (aktwelve) via github and run in Google Colab.
 
 For more details, see [here](###-model-selection)
 
 #### 4. Source and Prepare Training Data
-The Spacenet V2 [dataset](https://spacenet.ai/spacenet-buildings-dataset-v2/) is leveraged as the primary training data for this project.  Specifically, the smallest dataset covering portions of Khartoum, Sudan is leveraged due to data size constraints and model fitting time requirements.  This dataset is ideal in training a model to segment instances of buildings from satelite images, as the images are of high quality and each are provided with an accompanying mask for each building in a .geojson format.  Additional datasets were sourced
+The Spacenet V2 [dataset](https://spacenet.ai/spacenet-buildings-dataset-v2/) is leveraged as the primary training data for this project.  Specifically, the smallest dataset covering portions of Khartoum, Sudan is leveraged due to data size constraints and model fitting time requirements.  This dataset is ideal in training a model to segment instances of buildings from satelite images, as the images are of high quality and each are provided with an accompanying mask for each building in a .geojson format.  Additional datasets were sourced for consideration in transfer learning opportunities including roofline and roof type detection use cases.
 
 For more details, see [here](###-source-and-prepare-training-data)
 
 #### 5. Instantiate a Pre-Trained Convolutional Neural Network
+The Mask-RCNN model is adjusted to be retrained on the SpacenetV2 data and scoped for an accuracy level necessary for a proof of concept.
+
+For more details, see [here](### Modeling)
 
 #### 6. Evaluate Model Outputs and Identify Roof Colors 
 
@@ -81,24 +104,26 @@ Municipalities similarly cover the entirety of Greece, but names are provided fo
 ### Satelite and Aerial Imagery
 [Notebook](code/01_Image_Sourcing.ipynb)
 #### Sourcing
-The core of this project is the use of high quality satelite or (consistently sourced) aerial imagery covering an unaddressed area.  After assessing imagery available from NASA and Google's Earch Engine, Earth Engine was selected due to ease of use and exceptional documentation.  This includes a Google Colab Setup Guide provided in an .ipynb notebook [here](https://colab.research.google.com/github/google/earthengine-api/blob/master/python/examples/ipynb/ee-api-colab-setup.ipynb).  Google Earth Engine operates via API, and requires an account to be created and API keys to be generated and used for each session.
+The core of this project is the use of high quality satelite or (consistently sourced) aerial imagery covering an unaddressed area.  After assessing imagery available from NASA and Google's Earch Engine, Earth Engine is selected due to ease of use and exceptional documentation.  This includes a Google Colab Setup Guide provided in an .ipynb notebook [here](https://colab.research.google.com/github/google/earthengine-api/blob/master/python/examples/ipynb/ee-api-colab-setup.ipynb).  Google Earth Engine operates via API, and requires an account to be created and API keys to be generated and used for each session.
 
 #### [Imagery Selection](code/01_Image_Sourcing.ipynb##-select-projection-and-imagery-from-open-source-google-earth-engine)
 Once a notebook is connected to Google's Earth Engine, HTML maps can be generated and displayed in a similar manner to those available on Google Maps, including zoom and drag functionality.  The baseline map does not provide satelite imagery, but does highlight road networks, towns, and other road-atlas relevant features.  The [folium](https://python-visualization.github.io/folium/modules.html) library can be leveraged to source and overlay a wide array of images, including multiple satelite sources.  Map layers (leaflets) can be explored and sourced from [leaflet providers on Github](http://leaflet-extras.github.io/leaflet-providers/preview/).
 
-Each available leaflet was explored at high levels of zoom in an effort to select a leaflet which includes high quality images at a low zoom level (houses can be seen clearly when looking at a small geographic area.).  ESRI Imagery, provided via arcgis, enables a deep level of zoom, but imagery over the Island of Corfu is a bit blurry (image below).  This may make identifying individual buildings more difficult for a neural network, as the boundaries are clearly defined at high levels of zoom.
-
-<figure>
-    <img src=images/Agios_Matheos_ESRI.png width=400 alt='Agios Matheos - ESRI Imagery'>
-    <figcaption>Agios Matheos - ESRI Imagery</figcaption>
-</figure>
+Each available leaflet is explored at high levels of zoom in an effort to select a leaflet which includes high quality images at a low zoom level (houses can be seen clearly when looking at a small geographic area.).  ESRI Imagery, provided via arcgis, enables a deep level of zoom, but imagery over the Island of Corfu is a bit blurry (image below).  This may make identifying individual buildings more difficult for a neural network, as the boundaries are clearly defined at high levels of zoom.
+<div style="text-align:center;">
+    <figure>
+        <img src=images/Agios_Matheos_ESRI.png width=400 alt='Agios Matheos - ESRI Imagery'>
+        <figcaption>Agios Matheos - ESRI Imagery</figcaption>
+    </figure>
+</div>
 
 Another common library which commonly leverages the Google Earth Engine API is the geemap library.  The [documentation](https://github.com/gee-community/geemap/blob/master/geemap/basemaps.py) for this library contains a reference to the Google Satelite imagery.  Though this imagery is not available through the leaflet sources mentioned above (as ESRI imagery), it can be called via the Google Earth Engine if specified.  As shown below (with the same zoom level and map boundary), Google's Satelite imagery is much clearer for this area at high zoom levels.  As a result, this is the visualization layer selected for satelite image capture for this project.
-
-<figure>
-    <img src=images/Agios_Matheos_Google_Satelite.png width=400 alt='Agios Matheos - Google Earth Imagery'>
-    <figcaption>Agios Matheos - Google Earth Imagery</figcaption>
-</figure>
+<div style="text-align:center;">
+    <figure>
+        <img src=images/Agios_Matheos_Google_Satelite.png width=400 alt='Agios Matheos - Google Earth Imagery'>
+        <figcaption>Agios Matheos - Google Earth Imagery</figcaption>
+    </figure>
+</div>
 
 #### [Image Capture](code/01_Image_Sourcing.ipynb##-capture-small-scale-images)
 > Disclaimer: This project is undertaken for exploratory and educational purposes.  Commercial use of images sourced through Google Earth Engine or other sources is generally prohibited.  Special limitations on use of specific leaflet layers may bear additional usage restrictions.
@@ -116,22 +141,21 @@ A frame size of 300x310 pixels is used for the images captured.  This may seem s
 At this image size, a single gridwise map covering the island of Corfu would result in 118000 images being considered or captured.  For the municipality of Agros, this is closer to 4000 images.  
 
 Furthermore, images must be captured in two overlapping grids to maximize the instances of complete buildings being present in images.  A illustrative process flow of the image capture procedure is provided below.
-
-<figure>
-    <img src=images/grid1.png width=400 alt='Initial Grid Capture'>
-    <figcaption>1. Primary images are captured to create a grid covering the island boundaries within the maximun defined extents (cardinal directions) of the island.  Representative primary images boundaries are roughly identified by blue boxes.</figcaption>
-</figure>
-
-<figure>
-    <img src=images/grid2.png width=400 alt='Secondary Grid Capture'>
-    <figcaption>2. A secondary grid of images are captured within the same boundaries with a one-half width and height offset to the primary grid.  Any buildings which were divided into multiple images in the primary grid are captured entirely within one image on the secondary grid.  Representative primary images boundaries are roughly identified by orange boxes.</figcaption>
-</figure>
-
-<figure>
-    <img src=images/grid_coastline.png width=400 alt='Coastline Control During Grid Capture'>
-    <figcaption>3. Geographic Boundary Control - As each section of the grid is instantiated, the geographic boundary is considered prior to image capture.  Here the coastline is represented by a dashed green line.  If the center of the grid falls inside the geographic boundary (a closed shape), the image is captured.  Otherwise the image is skipped and the process moves to the next grid point.</figcaption>
-</figure>
-
+<div style="text-align:center;">
+    <figure>
+        <img src=images/grid1.png alt='Initial Grid Capture'>
+        <figcaption>1. Primary images are captured to create a grid covering the island boundaries within the maximun defined extents (cardinal directions) of the island.  Representative primary images boundaries are roughly identified by blue boxes.</figcaption>
+    </figure>
+    <figure>
+        <img src=images/grid2.png width=400 height=400 alt='Secondary Grid Capture'>
+        <figcaption>2. A secondary grid of images are captured within the same boundaries with a one-half width and height offset to the primary grid.  Any buildings which were divided into multiple images in the primary grid are captured entirely within one image on the secondary grid.  Representative primary images boundaries are roughly identified by orange boxes.</figcaption>
+    </figure>
+    <figure>
+        <img src=images/grid_coastline.png width=400 alt='Coastline Control During Grid Capture'>
+        <figcaption>3. Geographic Boundary Control - As each section of the grid is instantiated, the geographic boundary is considered prior to image capture.  Here the coastline is represented by a dashed green line.  If the center of the grid falls inside the geographic boundary (a closed shape), the image is captured.  Otherwise the image is skipped and the process moves to the next grid point.</figcaption>
+    </figure>
+</div>
+    
 Capturing each image requires five steps, accomplished in a single function:
 1. Identify wither the center of the image is within the designated boundary geometry
 2. Call Google Earth Engine API with the designated latitude/longitude, image size and zoom level - this returns an html window
@@ -140,20 +164,20 @@ Capturing each image requires five steps, accomplished in a single function:
 5. Delete the temporary HTML file to save space.
 
 Using the above process, thousands of high quality, relevant satelite and aerial images of consistent size and are captured quickly and available for modeling.  Some examples are below:
-
-<figure>
-    <img src=data/clean_data/satelite_images/39.712739999999954_19.746329999999986_sat.png width=400 alt=''>
-    <figcaption>Fuel Station between Troumpetas and Chorepiskopi</figcaption>
-</figure>
-<figure>
-    <img src=data/clean_data/satelite_images/39.72233999999993_19.741529999999987_sat.png width=400 alt=''>
-    <figcaption>Chorepiskopi</figcaption>
-</figure>
-<figure>
-    <img src=data/clean_data/satelite_images/39.70433999999997_19.70472999999999_sat.png width=400 alt=''>
-    <figcaption>Olive Tree Grove - Agros, Corfu</figcaption>
-</figure>
-
+<div style="text-align:center;">
+    <figure>
+        <img src=data/clean_data/satelite_images/39.712739999999954_19.746329999999986_sat.png width=400 alt='Fuel Station'>
+        <figcaption>Fuel Station between Troumpetas and Chorepiskopi</figcaption>
+    </figure>
+    <figure>
+        <img src=data/clean_data/satelite_images/39.72233999999993_19.741529999999987_sat.png width=400 alt='Chorepiskopi Town'>
+        <figcaption>Chorepiskopi</figcaption>
+    </figure>
+    <figure>
+        <img src=data/clean_data/satelite_images/39.70433999999997_19.70472999999999_sat.png width=400 alt='Olive Grove'>
+        <figcaption>Olive Tree Grove - Agros, Corfu</figcaption>
+    </figure>
+</div>
 ---
 ### Model Selection
 
@@ -168,12 +192,13 @@ The goal of this project is to leverage the images captured above to identify in
 
 <a href="https://github.com/matterport/Mask_RCNN">Mask-RCNN</a> is a pre-trained Convolutional Neural Network used for Instance Segmentation.  One guiding principle of Neural Networks is that as the rules you are attempting to learn grow in complexity, the amount of data needed to train the model increases as well.  Mask-RCNN has been trained on a range of very large datasets, which enable it to break down input images efficiently and identify instances of objects.  It can also be retrained to find new 'classes' of objects (like buildings) reasonably quickly - as the internal rules of breaking down an image have already been learned.  This makes Mask-RCNN a great model to leverage when seeking to identify individual houses from satelite imagery! <br><br>
         Mask-RCNN's output when considering an image of a street below provides an illustration of both instance identification (individual boxes for instances of each type of object identified) and masking (the highlight overlay of the pixels that make up each object.)
+        
         <figure>
             <img src=https://github.com/matterport/Mask_RCNN/raw/master/assets/street.png width=600 alt = "Matterport Mask-RCNN Street View">
             <figcaption>Sample Mask-RCNN Output.  Credit: Matterport.  <a hreff = "https://github.com/matterport/Mask_RCNN"> Source Link</a></figcaption>
         </figure>
 
-One note is that Mask-RCNN is not directly compatible with the current versions (2+) of the Tensorflow Library (which is used to run a wide range of neural networks, especially in Google's Colab environment).  For this project, a version of Mask-CNN upgraded to work with Tensorflow v2+ was sourced from Adam Kelly (aktwelve) <a href="https://github.com/akTwelve/Mask_RCNN">via Github</a>.  Many thanks to Adam and their collaborators for their work in ensuring this model is still usable!  Additional adjustments made to the model are listed in the Modeling section below.
+One note is that Mask-RCNN is not directly compatible with the current versions (2+) of the Tensorflow Library (which is used to run a wide range of neural networks, especially in Google's Colab environment).  For this project, a version of Mask-CNN upgraded to work with Tensorflow v2+ is sourced from Adam Kelly (aktwelve) <a href="https://github.com/akTwelve/Mask_RCNN">via Github</a>.  Many thanks to Adam and their collaborators for their work in ensuring this model is still usable!  Additional adjustments made to the model are listed in the Modeling section below.
 
 ---
 ### Source and Prepare Training Data
@@ -215,7 +240,7 @@ Citation: Fatemeh Alidoost, Hossein Arefi, Federico Tombari; “2D Image-To-3D M
 </blockquote>
 
 #### Pre-Processing SpacenetV2 Data
-SpacenetV2 Data is available in tar.gz files for each city.  Once extracted, the data requires significant pre-processing before being leveraged in modeling.  Details of the cleaning process are provided below and handled sequentially in the linked [notebook](code/04_Training_Data.ipynb).  Mustafa Aktas' <a href='https://github.com/Mstfakts/Building-Detection-MaskRCNN/tree/master'>Building Detection with MaskRCNN project on github</a> was leveraged as reference on starting approaches to some of the problems tacked during data preparation and model instantiation.  Many thanks to Mustafa for blazing this trail!
+SpacenetV2 Data is available in tar.gz files for each city.  Once extracted, the data requires significant pre-processing before being leveraged in modeling.  Details of the cleaning process are provided below and handled sequentially in the linked [notebook](code/04_Training_Data.ipynb).  Mustafa Aktas' <a href='https://github.com/Mstfakts/Building-Detection-MaskRCNN/tree/master'>Building Detection with MaskRCNN project on github</a> is leveraged as reference on starting approaches to some of the problems tacked during data preparation and model instantiation.  Many thanks to Mustafa for blazing this trail!
 
 ##### File Organization
 Initial file directories are laid out such that images and image labels are stored in separate directories for each image. Ex. img1 (multiple images) and img1-labels (geojson) are stored individually in unique directories.  Within each image file directory, there are four distinct image bands or types (all in 16 bit .tif format) MS, PAN, PS-MS, PS-RGB
@@ -237,24 +262,49 @@ Labels (building masks) are stored as .geojson objects - these will need to be r
 Image files are provided in a 16-bit .tif format.  These are not directly viewable by most systems.  A .png copy must be created for visualizaton and modeling (.png files can be converted to arrays for modeling, while .tif files cannot be converted directly).  .tif files must be retained, as the geographic metadata included in these files is key to matching the image with the geojson data in the labels when creating building-specific masks.
 > The imageio and OpenCV libraries are leveraged to open each .tif image and save a .png copy.
 
+---
+### Modeling
+[Notebook](code/05_Building_Detection.ipynb)
 
-## Modeling
+The process of instantiating a pre-fit model is unique for each model.  As such, this notebook is based on the train_shapes ipynb instructional file available on Matterport's Mask R-CNN [Github Repository](https://github.com/matterport/Mask_RCNN/blob/master/samples/shapes/train_shapes.ipynb).  This provides the baseline for imports, configuration and data split.  The model in use has been made compatible for use with Tensorflow 2.0+ versions by Adam Kelly ([github repository](https://github.com/akTwelve/Mask_RCNN))
 
-A Neural Network (likely a Convolutional Neural Network, or CNN) is best suited to the task of identifying houses and their key characteristics as of interest in this project. There are two primary approaches available: Self-Trained Model, or a Pre-Trained Model.
+##### Model Parameters
 
-Self Trained Models - are generally more flexible to specific tasks, but require a massive amount of training and validation data (as well as processing time) to fit model weights.
-Pre-Trained Models - have been designed and trained separately and are available for public use. Here, the input and output layers are updated, while the key hidden layers of the Network are 'frozen'
-Given the volume of training data which would be required to accurately identify houses, leveraging a pre-trained model is the likely best path for this use case. Widely available models are considered below.
+The model trained is based on the following parameters:
+* <strong>BACKBONE = resnet50</strong> - resnet50 is a 50-layer deep pre-trained Convolutional Neural Network available through Tensorflow Keras.  This is a popular pre-trained model which balances model performance with training time requirements.
+* <strong>GPU_COUNT = 1</strong> - Following the upgrade to Tensorflow version 2+, Mask-RCNN tends to encounter data loading and distribution issues when working with multiple GPUs.  This slows model training and prediction time, but should not have any negative performance impacts on prediction accuracy.
+* <strong>IMAGES_PER_GPU = 1</strong> - Each step will consider images in batches of 8
+* <strong>NUM_CLASSES = 2</strong> - For this project, the goal is to identify instances of buildings.  This requires a building class and a background class.
+* <strong>LEARNING_RATE = 0.01</strong> - This is a high learning rate (which controls how aggressively the model adjusts learned weights to correct for errors).  This is selected due to the model training time requirements of the project.  Ideally, this would be a smaller value on the order of 0.001.
+* <strong>STEPS_PER_EPOCH = 100</strong> - The model considers 100 batches of images in each epoch before saving weights and continuing training.  Training time varies for this model based on image complexity - at approximately 80 minutes of Google Colab GPU Runtime per 200 images.  Session timeout times necessitate a smaller step count per epoch to enable training to progress without losing significant progress.
+* <strong>EPOCHS = 20</strong> - This is a proof of concept model training and is not expected to exactly match buildings.  For a model going into production (not leveraged for a personal project), 200+ epochs with larger batch sizes and a more diverse range of augmented training data should be considered.
+
+##### Building Masks
+At model fitting time, images (.png files generated earlier) are loaded.  In parallel, .tif images are loaded in combination with the matching .geojson label files to generate a stacked numpy array of individual building masks.  Mustafa Aktas' approach is leveraged as a baseline for this portion of image preprocessing <a href="https://github.com/Mstfakts/Building-Detection-MaskRCNN/blob/master/SpaceNet_train.py">(reference)</a>. This approach requires the use of the geoio library, which has not been updated since 2016 and is out of date with current versions of Python.  
+
+Taking inspiration from Mustafa Aktas' work, this project leverages some of the image rasterizing logic used to create single .png image masks from the same data (leveraging the rioxarray library).  All versions of the code are retained but commented out in the linked notebook for reference to those interested in similar approaches.
+
+The result of this code is a stack of binary arrays with the following dimensions (image_width, image_height, number_of_buildings).  Each building has its own unique array mask passed into the model.  This enables the model to identify the rules that create multiple buildings per image, while also enabling the model to predict multiple buildings in a simlar stacked array output.
+
+<figure>
+    <img src=images/multi-mask356k.png alt='Khartoum 356'>
+    <img src=images/multi-mask911k.png alt='Khartoum 911'>
+    <img src=images/multi-mask814k.png alt='Khartoum 814'>
+    <figcaption>Images and Associated Masks for a sample of Khartoum Buildings</figcaption>
+</figure>
+<blockquote>
+    <strong>How to interpret these images?</strong><br>
+    Here the masks (white sections) are generated for each building sequentially based on the order they are recorded in the geojson file.  These are stored in an array of the same size of the image (650x650).  Each array is then stacked on top of each other, creating a 3-dimensional array.  If all of the masks were 'added' together, they would form an image similar to the unified black and white mask shown in the data sourcing section.  The Mask-RCNN model includes a visualization library which converts the background to blue and overlays images similar to pages of film used on an overhead projector.  The buildings rendered in darker blue are just 'farther back' in the three-dimensional array.  Pretty cool!
+</blockquote>
 
 
-### Adjustments to Mask R-CNN
+##### Adjustments to Mask R-CNN
+In addition to the excellent work done by Adam Kelly and team to upgrade Mask-RCNN for Tensorflow 2+, several adjustments needed to be made to the model locally to enable the model to train on this particular dataset.  Details are listed below.
 1. Update utils.py (294) prepare function to ensure generation of uniquely indexed images for both training and validation datasets (replaces 0-indexed sequential reference)
 1. Update model.py to read a consistent class list (was previously dependent upon a numeric index of images, always 0 indexed.)
 1. Update utils.py to handle an upgrade of the skimage library which interferes with mask resizing (where masks are stored as boolean arrays).  Cite: https://stackoverflow.com/a/73759783
 1. Update model.py (2156) to change selected keras optimizer from 'optimizer = keras.optimizers.SGD(...' to 'optimizer = keras.optimizers.legacy.SGD(...' to handle upgrades made to tensorflow.  Cite: https://stackoverflow.com/a/75596562 in reference to [Tensorflow Release Notes](https://github.com/tensorflow/tensorflow/releases)
 1. Update model.py at line 2362 to set workers=1 when calling keras.fit().  Multiprocessing with current Tensorflow versions and this model causes the fit process to hang (potentially indefinitely).  Cite: https://github.com/matterport/Mask_RCNN/issues/2696#issuecomment-1066224728
-
-downscale steps per epoch from generally recommended 2-500 range to 100 to create more checkpoints (slow training and colab timeouts)
 
 
 ## Visualizations and Accessibility
@@ -264,5 +314,3 @@ downscale steps per epoch from generally recommended 2-500 range to 100 to creat
 
 ## Credits and Acknowledgements
 
-## Images
-* ![Island of Corfu](images/iss030e254053~large.jpg) Credit: NASA Unpiloted Progress Resupply Vehicle NASA ID: iss030e254053 (22 April 2012). The city of Kerkyra (Corfu) is on seen the island at bottom-center.
