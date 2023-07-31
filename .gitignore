@@ -18,7 +18,8 @@ aktogrammh/
 code_archive.ipynb
 
 data/
-images/
+images/aktogrammh/
+images/temp/
 keys.py
 
 code/Mask_RCNN/assets/
