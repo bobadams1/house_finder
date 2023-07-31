@@ -42,10 +42,11 @@ This project requires the usage of a wide range of libraries and methods within 
 #### 1. Define Geographic Boundaries
 <div style="text-align:center;">    
     <figure>
-        <img src="images/geo_boundaries.png" alt="Geographic Boundaries"/>
+        <img src="images/geo_boundaries.png" alt="Geographic Boundaries"/><br>
         <figcaption>Geographic Boundaries for the Island of Corfu and the Municipality of Agros</figcaption>
     </figure>
 </div>
+
 Before capturing satelite images covering the Earth, setting fixed boundaries over which to search is key to capture relevant and useful images.  For this project, the Greek island of Corfu is of interest.  As Greece's 7th largest island (>610 sq. km), a secondary search area is defined by one of the island's 16 municipalities.  
 
 
@@ -55,10 +56,11 @@ For more details, see [here](###-geographic-boundaries).
 #### 2. Source Aerial Imagery
 <div style="text-align:center;">    
     <figure>
-        <img src="images/zoom-in.gif">
-        <figcaption>... Enhance ... Enhance ... Enhance ... Enhance...<br>Variable Zoom Rates.  Image Credit: Google Satelite Imagery</figcaption>
+        <img src="images/zoom-in.gif"><br>
+        <figcaption>... Enhance ... Enhance ... Enhance ... Enhance...<br><br>Variable Zoom Rates.  Image Credit: Google Satelite Imagery</figcaption>
     </figure>
 </div>
+
 
 Satelite Imagery is captured using Google's Earth Engine API and Google Satelite imagery.  Images are captured in two offset overlapping grids within the designated geographic boundary to maximize coverage and capture of complete buildings within individual images.  To aid in locating houses geographically, images are named with the latitude and longitude of the center of the image.
 
@@ -77,16 +79,16 @@ For more details, see [here](###-source-and-prepare-training-data)
 #### 5. Instantiate a Pre-Trained Convolutional Neural Network
 The Mask-RCNN model is adjusted to be retrained on the SpacenetV2 data and scoped for an accuracy level necessary for a proof of concept.
 
-For more details, see [here](### Modeling)
+For more details, see [here](###-modeling)
 
 #### 6. Evaluate Model Outputs and Identify Roof Colors 
 Model performance (mean Average Precision) is hindered by a version compatibility issue between the Mask-RCNN model and versions of Tensorflow currently available in Google Colab.  As a result, model weights cannot be accurately imported to the model which then yields near-zero precision of predictions.
 
-For more details, see [here](#### Model Performance)
+For more details, see [here](####-model-performance)
 
 Logic is constructed to extract predicted building geolocations and average roof color of predicted masks.  This ensures that if the model can be instantiated and trained in a compatible environment, the core use cases of the project (identify buildings by roof color from satelite imagery) is enabled.
 
-For more details, see [here]()
+For more details, see [here](###-model-predictions-and-building-characteristics)
 
 
 ---
@@ -121,18 +123,20 @@ Once a notebook is connected to Google's Earth Engine, HTML maps can be generate
 Each available leaflet is explored at high levels of zoom in an effort to select a leaflet which includes high quality images at a low zoom level (houses can be seen clearly when looking at a small geographic area.).  ESRI Imagery, provided via arcgis, enables a deep level of zoom, but imagery over the Island of Corfu is a bit blurry (image below).  This may make identifying individual buildings more difficult for a neural network, as the boundaries are clearly defined at high levels of zoom.
 <div style="text-align:center;">
     <figure>
-        <img src=images/Agios_Matheos_ESRI.png width=400 alt='Agios Matheos - ESRI Imagery'>
+        <img src=images/Agios_Matheos_ESRI.png width=400 alt='Agios Matheos - ESRI Imagery'><br>
         <figcaption>Agios Matheos - ESRI Imagery</figcaption>
     </figure>
 </div>
 
+
 Another common library which commonly leverages the Google Earth Engine API is the geemap library.  The [documentation](https://github.com/gee-community/geemap/blob/master/geemap/basemaps.py) for this library contains a reference to the Google Satelite imagery.  Though this imagery is not available through the leaflet sources mentioned above (as ESRI imagery), it can be called via the Google Earth Engine if specified.  As shown below (with the same zoom level and map boundary), Google's Satelite imagery is much clearer for this area at high zoom levels.  As a result, this is the visualization layer selected for satelite image capture for this project.
 <div style="text-align:center;">
     <figure>
-        <img src=images/Agios_Matheos_Google_Satelite.png width=400 alt='Agios Matheos - Google Earth Imagery'>
+        <img src=images/Agios_Matheos_Google_Satelite.png width=400 alt='Agios Matheos - Google Earth Imagery'><br>
         <figcaption>Agios Matheos - Google Earth Imagery</figcaption>
     </figure>
 </div>
+
 
 #### [Image Capture](code/01_Image_Sourcing.ipynb##-capture-small-scale-images)
 > Disclaimer: This project is undertaken for exploratory and educational purposes.  Commercial use of images sourced through Google Earth Engine or other sources is generally prohibited.  Special limitations on use of specific leaflet layers may bear additional usage restrictions.
@@ -153,19 +157,20 @@ At this image size, a single gridwise map covering the island of Corfu would res
 Furthermore, images must be captured in two overlapping grids to maximize the instances of complete buildings being present in images.  A illustrative process flow of the image capture procedure is provided below.
 <div style="text-align:center;">
     <figure>
-        <img src=images/grid1.png alt='Initial Grid Capture'>
+        <img src=images/grid1.png alt='Initial Grid Capture'><br>
         <figcaption>1. Primary images are captured to create a grid covering the island boundaries within the maximun defined extents (cardinal directions) of the island.  Representative primary images boundaries are roughly identified by blue boxes.</figcaption>
     </figure>
     <figure>
-        <img src=images/grid2.png width='400' height='400' alt='Secondary Grid Capture'>
+        <img src=images/grid2.png width='400' height='400' alt='Secondary Grid Capture'><br>
         <figcaption>2. A secondary grid of images are captured within the same boundaries with a one-half width and height offset to the primary grid.  Any buildings which were divided into multiple images in the primary grid are captured entirely within one image on the secondary grid.  Representative primary images boundaries are roughly identified by orange boxes.</figcaption>
     </figure>
     <figure>
-        <img src=images/grid_coastline.png width=400 alt='Coastline Control During Grid Capture'>
+        <img src=images/grid_coastline.png width=400 alt='Coastline Control During Grid Capture'><br>
         <figcaption>3. Geographic Boundary Control - As each section of the grid is instantiated, the geographic boundary is considered prior to image capture.  Here the coastline is represented by a dashed green line.  If the center of the grid falls inside the geographic boundary (a closed shape), the image is captured.  Otherwise the image is skipped and the process moves to the next grid point.</figcaption>
     </figure>
 </div>
     
+
 Capturing each image requires five steps, accomplished in a single function:
 1. Identify wither the center of the image is within the designated boundary geometry
 2. Call Google Earth Engine API with the designated latitude/longitude, image size and zoom level - this returns an html window
@@ -176,18 +181,19 @@ Capturing each image requires five steps, accomplished in a single function:
 Using the above process, thousands of high quality, relevant satelite and aerial images of consistent size and are captured quickly and available for modeling.  Some examples are below:
 <div style="text-align:center;">
     <figure>
-        <img src=images/39.70193999999998_19.71912999999999_sat.png width=400 alt='Hamlet, Agros'>
+        <img src=images/39.70193999999998_19.71912999999999_sat.png width=400 alt='Hamlet, Agros'><br>
         <figcaption>Farming Hamlet - Agros, Corfu</figcaption>
     </figure>
     <figure>
-        <img src=images/39.70433999999997_19.69832999999999_sat.png width=400 alt='Chorepiskopi Town'>
+        <img src=images/39.70433999999997_19.69832999999999_sat.png width=400 alt='Chorepiskopi Town'><br>
         <figcaption>Chorepiskopi</figcaption>
     </figure>
     <figure>
-        <img src=images/39.70206892455841_19.718180550436898_sat.png width=400 alt='Agros, Agros'>
+        <img src=images/39.70206892455841_19.718180550436898_sat.png width=400 alt='Agros, Agros'><br>
         <figcaption>Agros, Corfu</figcaption>
     </figure>
 </div>
+
 
 ***Note*** During image extraction, rate limits resulting in 'unknown network errors' occurred after approximately 1000 image loads.  For larger areas, a larger window size or batching within the area of interest is recommended.
 
@@ -207,10 +213,12 @@ The goal of this project is to leverage the images captured above to identify in
         Mask-RCNN's output when considering an image of a street below provides an illustration of both instance identification (individual boxes for instances of each type of object identified) and masking (the highlight overlay of the pixels that make up each object.)
 <div style="text-align:center;">        
     <figure>
-        <img src=https://github.com/matterport/Mask_RCNN/raw/master/assets/street.png width=600 alt = "Matterport Mask-RCNN Street View">
+        <img src=https://github.com/matterport/Mask_RCNN/raw/master/assets/street.png width=600 alt = "Matterport Mask-RCNN Street View"><br>
         <figcaption>Sample Mask-RCNN Output.  Credit: Matterport.  <a hreff = "https://github.com/matterport/Mask_RCNN"> Source Link</a></figcaption>
     </figure>
 </div>
+
+
 One note is that Mask-RCNN is not directly compatible with the current versions (2+) of the Tensorflow Library (which is used to run a wide range of neural networks, especially in Google's Colab environment).  For this project, a version of Mask-CNN upgraded to work with Tensorflow v2+ is sourced from Adam Kelly (aktwelve) <a href="https://github.com/akTwelve/Mask_RCNN">via Github</a>.  Many thanks to Adam and their collaborators for their work in ensuring this model is still usable!  Additional adjustments made to the model are listed in the Modeling section below.
 
 ---
@@ -246,7 +254,7 @@ It consists of cropped images, nDSMs, and roof elements including three classes 
     
 <div style="text-align:center;">        
     <figure>
-        <img src=images/loosgagnet_roofline.png><img src = images/loosgagnet_roofline_mask.png>
+        <img src=images/loosgagnet_roofline.png><img src = images/loosgagnet_roofline_mask.png><br>
         <figcaption>loosgagnet Roofline Extraction - images processed for this project</figcaption>
     </figure>
 </div>
@@ -269,12 +277,14 @@ File names are unique, but include gaps in the indices within the source file (i
 Labels (building masks) are stored as .geojson objects - these will need to be reformatted as images for validation and leveraged to create individual building masks (arrays) for modeling (ex. Image 1, Building 1 is made up of these shaded pixels).
 > The rioxarray and rasterio libraries are leveraged to create single building masks for each image as .tif files in a maps directory.  These are later imported via the OpenCV library and saved as .png files (viewable).  Example below.  It should be noted that individual buildings are not segmented in these mask images.  They are useful for inspection and validation only.  The model will require individual masks for each building for training purposes.  These are generated in line during modeling.
 
+
 <div style="text-align:center;">
     <figure>
-        <img src=data/training_data/spacenet_v2/images/img1002PS-RGB_.png width=400 alt="SpacenetV2 Image 1002"> <img src=data/training_data/spacenet_v2/maps/1002mask_.png width= 400 alt = 'SpacenetV2 Image 1002 Combined Mask'>
+        <img src=images/img1002PS-RGB_.png width=400 alt="SpacenetV2 Image 1002"> <img src=images/1002mask_.png width= 400 alt = 'SpacenetV2 Image 1002 Combined Mask'>
         <figcaption>SpacenetV2 Khartoum Image 1002 and matching mask for all combined buildings (sourced from geojson)</figcaption>
     </figure>
 </div>
+
 
 ##### Image File Types
 Image files are provided in a 16-bit .tif format.  These are not directly viewable by most systems.  A .png copy must be created for visualizaton and modeling (.png files can be converted to arrays for modeling, while .tif files cannot be converted directly).  .tif files must be retained, as the geographic metadata included in these files is key to matching the image with the geojson data in the labels when creating building-specific masks.
@@ -311,10 +321,12 @@ The result of this code is a stack of binary arrays with the following dimension
     <figure>
         <img src=images/multi-mask356k.png alt='Khartoum 356'>
         <img src=images/multi-mask911k.png alt='Khartoum 911'>
-        <img src=images/multi-mask814k.png alt='Khartoum 814'>
+        <img src=images/multi-mask814k.png alt='Khartoum 814'><br>
         <figcaption>Images and Associated Masks for a sample of Khartoum Buildings</figcaption>
     </figure>
 </div>
+
+
 <blockquote>
     <strong>How to interpret these images?</strong><br>
     Here the masks (white sections) are generated for each building sequentially based on the order they are recorded in the geojson file.  These are stored in an array of the same size of the image (650x650).  Each array is then stacked on top of each other, creating a 3-dimensional array.  If all of the masks were 'added' together, they would form an image similar to the unified black and white mask shown in the data sourcing section.  The Mask-RCNN model includes a visualization library which converts the background to blue and overlays images similar to pages of film used on an overhead projector.  The buildings rendered in darker blue are just 'farther back' in the three-dimensional array.  Pretty cool!
@@ -331,13 +343,16 @@ In addition to the excellent work done by Adam Kelly and team to upgrade Mask-RC
 
 #### Model Performance
 Following 18 epochs of of training using SpacenetV2 data (trainig the model 'heads' layers to recognize and identify instances of buildings), a mean average precision (mAP) of predictions was calculated (with an intersection over union ratio of 0.5) at 0.0%.  This indicates the model was not able to accurately identify any buildings when considering 10 images and maps from the validation dataset (of SpacenetV2).  A random sample image from the validation dataset was plotted, first considering the known building locations and masks and compared to the model outputs.
+
+
 <div style="text-align:center;">
     <figure>
-        <img src=images/validation_actual.png alt = 'SpacenetV2 Validation Image - Known Mask', width=300> <img src=images/validation_predicted.png alt='SpacenetV2 Validation Image - Predicted Building Masks' width = 300>
-        <img src=images/validation_actual_2.png alt = 'SpacenetV2 Validation Image - Known Mask', width=300> <img src=images/validation_predicted_2.png alt='SpacenetV2 Validation Image - Predicted Building Masks' width = 300>
+        <img src=images/validation_actual.png alt = 'SpacenetV2 Validation Image - Known Mask', width=300> <img src=images/validation_predicted.png alt='SpacenetV2 Validation Image - Predicted Building Masks' width = 300><br>
+        <img src=images/validation_actual_2.png alt = 'SpacenetV2 Validation Image - Known Mask', width=300> <img src=images/validation_predicted_2.png alt='SpacenetV2 Validation Image - Predicted Building Masks' width = 300><br>
         <figcaption>Actual (left) and Predicted (right) Building Instances from SpaceNetV2 Images</figcaption>
     </figure>
 </div>
+
 
 ***Why are the model results so inaccurate?***
 Other recent users of the Mask-RCNN Model have reported similar model outputs, even on demonstrative model training and evaluation workflows available in the model itself ([example](https://github.com/matterport/Mask_RCNN/issues/2684)).  Users have in some cases been able to instantiate and train the Mask-RCNN model effectively by running the model in an environment with earlier versions of Tensorflow installed (namely <= Tensorflow 2.5).  Mask-RCNN relies on the Tensorflow and Keras libraries for a majority of the model components.  One user (Avinash) [identified](https://github.com/matterport/Mask_RCNN/issues/2684#issuecomment-1621635909) that the newer versions of Tensorflow cause the load_weights function to instantiate Mask-RCNN with incorrect weights throughout all layers.  Retraining the model 'heads' on new trainig data while leaving the hidden layers of the neural network frozen to the pre-trained weights results in highly inaccurate predictions (in this case, either no buildings or a large number of single-pixel or non-dimensional building instances are identified.).
