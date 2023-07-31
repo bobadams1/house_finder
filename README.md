@@ -45,7 +45,7 @@ This project requires the usage of a wide range of libraries and methods within 
         <img src="images/geo_boundaries.png" alt="Geographic Boundaries"/><br>
         <figcaption>Geographic Boundaries for the Island of Corfu and the Municipality of Agros</figcaption>
     </figure>
-</div>
+</div><br>
 
 Before capturing satelite images covering the Earth, setting fixed boundaries over which to search is key to capture relevant and useful images.  For this project, the Greek island of Corfu is of interest.  As Greece's 7th largest island (>610 sq. km), a secondary search area is defined by one of the island's 16 municipalities.  
 
@@ -59,7 +59,7 @@ For more details, see [here](###-geographic-boundaries).
         <img src="images/zoom-in.gif"><br>
         <figcaption>... Enhance ... Enhance ... Enhance ... Enhance...<br><br>Variable Zoom Rates.  Image Credit: Google Satelite Imagery</figcaption>
     </figure>
-</div>
+</div><br>
 
 
 Satelite Imagery is captured using Google's Earth Engine API and Google Satelite imagery.  Images are captured in two offset overlapping grids within the designated geographic boundary to maximize coverage and capture of complete buildings within individual images.  To aid in locating houses geographically, images are named with the latitude and longitude of the center of the image.
@@ -126,16 +126,15 @@ Each available leaflet is explored at high levels of zoom in an effort to select
         <img src=images/Agios_Matheos_ESRI.png width=400 alt='Agios Matheos - ESRI Imagery'><br>
         <figcaption>Agios Matheos - ESRI Imagery</figcaption>
     </figure>
-</div>
-
-
+</div><br>
 Another common library which commonly leverages the Google Earth Engine API is the geemap library.  The [documentation](https://github.com/gee-community/geemap/blob/master/geemap/basemaps.py) for this library contains a reference to the Google Satelite imagery.  Though this imagery is not available through the leaflet sources mentioned above (as ESRI imagery), it can be called via the Google Earth Engine if specified.  As shown below (with the same zoom level and map boundary), Google's Satelite imagery is much clearer for this area at high zoom levels.  As a result, this is the visualization layer selected for satelite image capture for this project.
+
 <div style="text-align:center;">
     <figure>
         <img src=images/Agios_Matheos_Google_Satelite.png width=400 alt='Agios Matheos - Google Earth Imagery'><br>
         <figcaption>Agios Matheos - Google Earth Imagery</figcaption>
     </figure>
-</div>
+</div><br>
 
 
 #### [Image Capture](code/01_Image_Sourcing.ipynb##-capture-small-scale-images)
@@ -168,7 +167,7 @@ Furthermore, images must be captured in two overlapping grids to maximize the in
         <img src=images/grid_coastline.png width=400 alt='Coastline Control During Grid Capture'><br>
         <figcaption>3. Geographic Boundary Control - As each section of the grid is instantiated, the geographic boundary is considered prior to image capture.  Here the coastline is represented by a dashed green line.  If the center of the grid falls inside the geographic boundary (a closed shape), the image is captured.  Otherwise the image is skipped and the process moves to the next grid point.</figcaption>
     </figure>
-</div>
+</div><br>
     
 
 Capturing each image requires five steps, accomplished in a single function:
@@ -192,8 +191,7 @@ Using the above process, thousands of high quality, relevant satelite and aerial
         <img src=images/39.70206892455841_19.718180550436898_sat.png width=400 alt='Agros, Agros'><br>
         <figcaption>Agros, Corfu</figcaption>
     </figure>
-</div>
-
+</div><br>
 
 ***Note*** During image extraction, rate limits resulting in 'unknown network errors' occurred after approximately 1000 image loads.  For larger areas, a larger window size or batching within the area of interest is recommended.
 
@@ -216,7 +214,7 @@ The goal of this project is to leverage the images captured above to identify in
         <img src=https://github.com/matterport/Mask_RCNN/raw/master/assets/street.png width=600 alt = "Matterport Mask-RCNN Street View"><br>
         <figcaption>Sample Mask-RCNN Output.  Credit: Matterport.  <a hreff = "https://github.com/matterport/Mask_RCNN"> Source Link</a></figcaption>
     </figure>
-</div>
+</div><br>
 
 
 One note is that Mask-RCNN is not directly compatible with the current versions (2+) of the Tensorflow Library (which is used to run a wide range of neural networks, especially in Google's Colab environment).  For this project, a version of Mask-CNN upgraded to work with Tensorflow v2+ is sourced from Adam Kelly (aktwelve) <a href="https://github.com/akTwelve/Mask_RCNN">via Github</a>.  Many thanks to Adam and their collaborators for their work in ensuring this model is still usable!  Additional adjustments made to the model are listed in the Modeling section below.
@@ -257,7 +255,7 @@ It consists of cropped images, nDSMs, and roof elements including three classes 
         <img src=images/loosgagnet_roofline.png><img src = images/loosgagnet_roofline_mask.png><br>
         <figcaption>loosgagnet Roofline Extraction - images processed for this project</figcaption>
     </figure>
-</div>
+</div><br>
     
 ---
 Citation: Fatemeh Alidoost, Hossein Arefi, Federico Tombari; “2D Image-To-3D Model: Knowledge-Based 3D Building Reconstruction (3DBR) Using Single Aerial Images and Convolutional Neural Networks (CNNs)”, Remote Sens. 2019, 11, 2219, [https://doi.org/10.3390/rs11192219]('https://doi.org/10.3390/rs11192219')
@@ -283,7 +281,7 @@ Labels (building masks) are stored as .geojson objects - these will need to be r
         <img src=images/img1002PS-RGB_.png width=400 alt="SpacenetV2 Image 1002"> <img src=images/1002mask_.png width= 400 alt = 'SpacenetV2 Image 1002 Combined Mask'>
         <figcaption>SpacenetV2 Khartoum Image 1002 and matching mask for all combined buildings (sourced from geojson)</figcaption>
     </figure>
-</div>
+</div><br>
 
 
 ##### Image File Types
@@ -324,7 +322,7 @@ The result of this code is a stack of binary arrays with the following dimension
         <img src=images/multi-mask814k.png alt='Khartoum 814'><br>
         <figcaption>Images and Associated Masks for a sample of Khartoum Buildings</figcaption>
     </figure>
-</div>
+</div><br>
 
 
 <blockquote>
@@ -351,7 +349,7 @@ Following 18 epochs of of training using SpacenetV2 data (trainig the model 'hea
         <img src=images/validation_actual_2.png alt = 'SpacenetV2 Validation Image - Known Mask', width=300> <img src=images/validation_predicted_2.png alt='SpacenetV2 Validation Image - Predicted Building Masks' width = 300><br>
         <figcaption>Actual (left) and Predicted (right) Building Instances from SpaceNetV2 Images</figcaption>
     </figure>
-</div>
+</div><br>
 
 
 ***Why are the model results so inaccurate?***
