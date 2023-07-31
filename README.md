@@ -2,7 +2,7 @@
 #### Bob Adams - July 2023
 <div style="text-align:center;">    
     <figure>
-        <img src="images/iss030e254053~large.jpg" alt="Corfu Satelite" width="700"/>
+        <img src="images/iss030e254053~large.jpg" alt="Corfu Satelite" width="700"/><br>
         <figcaption>Photo Credit: [NASA](https://images.nasa.gov/details/iss030e254053) (ISS030-E-254053 (22 April 2012))</figcaption>
     </figure>
 </div>
@@ -268,12 +268,14 @@ File names are unique, but include gaps in the indices within the source file (i
 
 Labels (building masks) are stored as .geojson objects - these will need to be reformatted as images for validation and leveraged to create individual building masks (arrays) for modeling (ex. Image 1, Building 1 is made up of these shaded pixels).
 > The rioxarray and rasterio libraries are leveraged to create single building masks for each image as .tif files in a maps directory.  These are later imported via the OpenCV library and saved as .png files (viewable).  Example below.  It should be noted that individual buildings are not segmented in these mask images.  They are useful for inspection and validation only.  The model will require individual masks for each building for training purposes.  These are generated in line during modeling.
+
 <div style="text-align:center;">
     <figure>
         <img src=data/training_data/spacenet_v2/images/img1002PS-RGB_.png width=400 alt="SpacenetV2 Image 1002"> <img src=data/training_data/spacenet_v2/maps/1002mask_.png width= 400 alt = 'SpacenetV2 Image 1002 Combined Mask'>
         <figcaption>SpacenetV2 Khartoum Image 1002 and matching mask for all combined buildings (sourced from geojson)</figcaption>
     </figure>
-</div>    
+</div>
+
 ##### Image File Types
 Image files are provided in a 16-bit .tif format.  These are not directly viewable by most systems.  A .png copy must be created for visualizaton and modeling (.png files can be converted to arrays for modeling, while .tif files cannot be converted directly).  .tif files must be retained, as the geographic metadata included in these files is key to matching the image with the geojson data in the labels when creating building-specific masks.
 > The imageio and OpenCV libraries are leveraged to open each .tif image and save a .png copy.
