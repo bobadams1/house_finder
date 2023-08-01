@@ -1,9 +1,9 @@
-# Identifying Houses in Areas without Addresses via Satelite Imagery and Mask-RCNN
+# Identifying Houses in Areas without Addresses via Satellite Imagery and Mask-RCNN
 #### Bob Adams - July 2023
 <div style="text-align:center;">    
     <figure>
         <img src="images/iss030e254053~large.jpg" alt="Corfu Satelite" width="700"/><br>
-        <figcaption>Photo Credit: [NASA](https://images.nasa.gov/details/iss030e254053) (ISS030-E-254053 (22 April 2012))</figcaption>
+        <figcaption>Photo Credit: [NASA](https://images.nasa.gov/details/iss030e254053) (ISS030-E-254053 (22 April 2012))</figcaption><br>
     </figure>
 </div>
 
@@ -22,10 +22,10 @@ Several attempts to address this gap have been undertaken by overlaying the plan
 
 _***But what if you don't know the identifier and can't really find someone to ask?***_
 
-I have personally run into this on two occasions while trying to find the location of a house we were staying at in Donegal County, Ireland - and a similar experience on the Greek island of Corfu.  I had a picture of the house and a rough location, but no address.  It's not always easy to find "Tom's house, down the way from the Pub" in the dark!  To solve this issue, I found myself leveraging satelite images - identifying distinct features in images and attempting to locate the house by physical relationship.  The material (color) and shape of the roofs visible in images taken from the ground (or from inside the property) were the most consistently useful datapoints.  I took a few wrong turns, but eventually found the destination.
+I have personally run into this on two occasions while trying to find the location of a house we were staying at in Donegal County, Ireland - and a similar experience on the Greek island of Corfu.  I had a picture of the house and a rough location, but no address.  It's not always easy to find "Tom's house, down the way from the Pub" in the dark!  To solve this issue, I found myself leveraging satellite images - identifying distinct features in images and attempting to locate the house by physical relationship.  The material (color) and shape of the roofs visible in images taken from the ground (or from inside the property) were the most consistently useful datapoints.  I took a few wrong turns, but eventually found the destination.
 
 ### Goal
-This project seeks to leverage publicly available satelite and aerial imagery of unaddressed areas to identify buildings, roof types and materials and provide users with a map narrowing down likely destinations.  In cases where the town/city designation, paired with the roof description is unique, the goal is to create a geolocation of of the building they are looking for.  Otherwise, this project seeks to reduce the number of wrong turns taken in unfamiliar, unaddressed areas.
+This project seeks to leverage publicly available satellite and aerial imagery of unaddressed areas to identify buildings, roof types and materials and provide users with a map narrowing down likely destinations.  In cases where the town/city designation, paired with the roof description is unique, the goal is to create a geolocation of of the building they are looking for.  Otherwise, this project seeks to reduce the number of wrong turns taken in unfamiliar, unaddressed areas.
 
 ***How might this be leveraged in practice?***
 
@@ -43,7 +43,7 @@ This project requires the usage of a wide range of libraries and methods within 
 <div style="text-align:center;">    
     <figure>
         <img src="images/geo_boundaries.png" alt="Geographic Boundaries"/><br>
-        <figcaption>Geographic Boundaries for the Island of Corfu and the Municipality of Agros</figcaption>
+        <figcaption>Geographic Boundaries for the Island of Corfu and the Municipality of Agros</figcaption><br>
     </figure>
 </div><br>
 
@@ -57,14 +57,14 @@ For more details, see [here](###-geographic-boundaries).
 <div style="text-align:center;">    
     <figure>
         <img src="images/zoom-in.gif"><br>
-        <figcaption>... Enhance ... Enhance ... Enhance ... Enhance...<br><br>Variable Zoom Rates.  Image Credit: Google Satelite Imagery</figcaption>
+        <figcaption>... Enhance ... Enhance ... Enhance ... Enhance...<br><br>Variable Zoom Rates.  Image Credit: Google Satellite Imagery</figcaption><br>
     </figure>
 </div><br>
 
 
-Satelite Imagery is captured using Google's Earth Engine API and Google Satelite imagery.  Images are captured in two offset overlapping grids within the designated geographic boundary to maximize coverage and capture of complete buildings within individual images.  To aid in locating houses geographically, images are named with the latitude and longitude of the center of the image.
+Satellite Imagery is captured using Google's Earth Engine API and Google Satellite imagery.  Images are captured in two offset overlapping grids within the designated geographic boundary to maximize coverage and capture of complete buildings within individual images.  To aid in locating houses geographically, images are named with the latitude and longitude of the center of the image.
 
-For more details, see [here](###-satelite-and-aerial-imagery).
+For more details, see [here](###-satellite-and-aerial-imagery).
 
 #### 3. Model Selection
 Matterport's Mask-RCNN model is selected to take advantage of a high quality, open source instance segmentation Convolutional Neural Network, and to minimize training time and resource requirements.  A version of the model upgraded for compatibility with Tensorflow versions 2+ is sourced from a branch created by Adam Kelly (aktwelve) via github and run in Google Colab.
@@ -72,7 +72,7 @@ Matterport's Mask-RCNN model is selected to take advantage of a high quality, op
 For more details, see [here](###-model-selection)
 
 #### 4. Source and Prepare Training Data
-The Spacenet V2 [dataset](https://spacenet.ai/spacenet-buildings-dataset-v2/) is leveraged as the primary training data for this project.  Specifically, the smallest dataset covering portions of Khartoum, Sudan is leveraged due to data size constraints and model fitting time requirements.  This dataset is ideal in training a model to segment instances of buildings from satelite images, as the images are of high quality and each are provided with an accompanying mask for each building in a .geojson format.  Additional datasets were sourced for consideration in transfer learning opportunities including roofline and roof type detection use cases.
+The Spacenet V2 [dataset](https://spacenet.ai/spacenet-buildings-dataset-v2/) is leveraged as the primary training data for this project.  Specifically, the smallest dataset covering portions of Khartoum, Sudan is leveraged due to data size constraints and model fitting time requirements.  This dataset is ideal in training a model to segment instances of buildings from satellite images, as the images are of high quality and each are provided with an accompanying mask for each building in a .geojson format.  Additional datasets were sourced for consideration in transfer learning opportunities including roofline and roof type detection use cases.
 
 For more details, see [here](###-source-and-prepare-training-data)
 
@@ -81,12 +81,12 @@ The Mask-RCNN model is adjusted to be retrained on the SpacenetV2 data and scope
 
 For more details, see [here](###-modeling)
 
-#### 6. Evaluate Model Outputs and Identify Roof Colors 
+#### 6. Evaluate Model Outputs and Identify Roof Characteristics
 Model performance (mean Average Precision) is hindered by a version compatibility issue between the Mask-RCNN model and versions of Tensorflow currently available in Google Colab.  As a result, model weights cannot be accurately imported to the model which then yields near-zero precision of predictions.
 
 For more details, see [here](####-model-performance)
 
-Logic is constructed to extract predicted building geolocations and average roof color of predicted masks.  This ensures that if the model can be instantiated and trained in a compatible environment, the core use cases of the project (identify buildings by roof color from satelite imagery) is enabled.
+Logic is constructed to extract predicted building geolocations and average roof color of predicted masks.  This ensures that if the model can be instantiated and trained in a compatible environment, the core use cases of the project (identify buildings by roof color from satellite imagery) is enabled.
 
 For more details, see [here](###-model-predictions-and-building-characteristics)
 
@@ -94,9 +94,9 @@ For more details, see [here](###-model-predictions-and-building-characteristics)
 ---
 ## Data Sourcing and Preparation
 ### Geographic Boundaries
-[Notebook](./code/01_Shoreline_Boundary.ipynb)
+[Notebook](code/01_Shoreline_Boundary.ipynb)
 #### Sourcing
-Though it is possible to capture arerial and satelite imagery covering the entirety of the planet, it would not be useful (oceans and seas), nor practical (data volume) to do so.  Two methods are available to establish boundaries, whithin which imagery can be captured:
+Though it is possible to capture arerial and satellite imagery covering the entirety of the planet, it would not be useful (oceans and seas), nor practical (data volume) to do so.  Two methods are available to establish boundaries, whithin which imagery can be captured:
 1) ***Bounded Box*** - A simple box of Latitude and Longitude minimum and maximum values.  The result would cover a rectangle (map projectios notwithstanding).  This simpler approach would work well if a segment of a city is the area of interest, for example.
 2) **Geometrically Defined Boundary*** - Leveraging geometric data (such as the border of a country or a coastline) protects against capturing irrelevant images.  In the case of an island, restricting capture to images on the island - and not the sea is preferable.
 
@@ -112,39 +112,39 @@ Line segments provided in the shapefile (on the order of a kilometer in length) 
 Municipalities similarly cover the entirety of Greece, but names are provided for reference and filtering.  Here 'Ν. ΚΕΡΚΥΡΑΣ' (the Greek named for the island "Kerkyra") is used to filter to municipalities on the island.  The municipality of 'ΑΓΡΟΣ' (Agros) is selected to enable further segmentation of the island if needed.
 
 ---
-### Satelite and Aerial Imagery
-[Notebook](code/01_Image_Sourcing.ipynb)
+### Satellite and Aerial Imagery
+[Notebook](code/02_Image_Sourcing.ipynb)
 #### Sourcing
-The core of this project is the use of high quality satelite or (consistently sourced) aerial imagery covering an unaddressed area.  After assessing imagery available from NASA and Google's Earch Engine, Earth Engine is selected due to ease of use and exceptional documentation.  This includes a Google Colab Setup Guide provided in an .ipynb notebook [here](https://colab.research.google.com/github/google/earthengine-api/blob/master/python/examples/ipynb/ee-api-colab-setup.ipynb).  Google Earth Engine operates via API, and requires an account to be created and API keys to be generated and used for each session.
+The core of this project is the use of high quality satellite or (consistently sourced) aerial imagery covering an unaddressed area.  After assessing imagery available from NASA and Google's Earch Engine, Earth Engine is selected due to ease of use and exceptional documentation.  This includes a Google Colab Setup Guide provided in an .ipynb notebook [here](https://colab.research.google.com/github/google/earthengine-api/blob/master/python/examples/ipynb/ee-api-colab-setup.ipynb).  Google Earth Engine operates via API, and requires an account to be created and API keys to be generated and used for each session.
 
-#### [Imagery Selection](code/01_Image_Sourcing.ipynb##-select-projection-and-imagery-from-open-source-google-earth-engine)
-Once a notebook is connected to Google's Earth Engine, HTML maps can be generated and displayed in a similar manner to those available on Google Maps, including zoom and drag functionality.  The baseline map does not provide satelite imagery, but does highlight road networks, towns, and other road-atlas relevant features.  The [folium](https://python-visualization.github.io/folium/modules.html) library can be leveraged to source and overlay a wide array of images, including multiple satelite sources.  Map layers (leaflets) can be explored and sourced from [leaflet providers on Github](http://leaflet-extras.github.io/leaflet-providers/preview/).
+#### [Imagery Selection](code/code/02_Image_Sourcing.ipynb##-select-projection-and-imagery-from-open-source-google-earth-engine)
+Once a notebook is connected to Google's Earth Engine, HTML maps can be generated and displayed in a similar manner to those available on Google Maps, including zoom and drag functionality.  The baseline map does not provide satellite imagery, but does highlight road networks, towns, and other road-atlas relevant features.  The [folium](https://python-visualization.github.io/folium/modules.html) library can be leveraged to source and overlay a wide array of images, including multiple satellite sources.  Map layers (leaflets) can be explored and sourced from [leaflet providers on Github](http://leaflet-extras.github.io/leaflet-providers/preview/).
 
 Each available leaflet is explored at high levels of zoom in an effort to select a leaflet which includes high quality images at a low zoom level (houses can be seen clearly when looking at a small geographic area.).  ESRI Imagery, provided via arcgis, enables a deep level of zoom, but imagery over the Island of Corfu is a bit blurry (image below).  This may make identifying individual buildings more difficult for a neural network, as the boundaries are clearly defined at high levels of zoom.
 <div style="text-align:center;">
     <figure>
         <img src=images/Agios_Matheos_ESRI.png width=400 alt='Agios Matheos - ESRI Imagery'><br>
-        <figcaption>Agios Matheos - ESRI Imagery</figcaption>
+        <figcaption>Agios Matheos - ESRI Imagery</figcaption><br>
     </figure>
 </div><br>
-Another common library which commonly leverages the Google Earth Engine API is the geemap library.  The [documentation](https://github.com/gee-community/geemap/blob/master/geemap/basemaps.py) for this library contains a reference to the Google Satelite imagery.  Though this imagery is not available through the leaflet sources mentioned above (as ESRI imagery), it can be called via the Google Earth Engine if specified.  As shown below (with the same zoom level and map boundary), Google's Satelite imagery is much clearer for this area at high zoom levels.  As a result, this is the visualization layer selected for satelite image capture for this project.
+Another common library which commonly leverages the Google Earth Engine API is the geemap library.  The [documentation](https://github.com/gee-community/geemap/blob/master/geemap/basemaps.py) for this library contains a reference to the Google Satellite imagery.  Though this imagery is not available through the leaflet sources mentioned above (as ESRI imagery), it can be called via the Google Earth Engine if specified.  As shown below (with the same zoom level and map boundary), Google's Satellite imagery is much clearer for this area at high zoom levels.  As a result, this is the visualization layer selected for satellite image capture for this project.
 
 <div style="text-align:center;">
     <figure>
-        <img src=images/Agios_Matheos_Google_Satelite.png width=400 alt='Agios Matheos - Google Earth Imagery'><br>
-        <figcaption>Agios Matheos - Google Earth Imagery</figcaption>
+        <img src=images/Agios_Matheos_Google_Satellite.png width=400 alt='Agios Matheos - Google Earth Imagery'><br>
+        <figcaption>Agios Matheos - Google Earth Imagery</figcaption><br>
     </figure>
 </div><br>
 
 
-#### [Image Capture](code/01_Image_Sourcing.ipynb##-capture-small-scale-images)
+#### [Image Capture](code/code/02_Image_Sourcing.ipynb##-capture-small-scale-images)
 > Disclaimer: This project is undertaken for exploratory and educational purposes.  Commercial use of images sourced through Google Earth Engine or other sources is generally prohibited.  Special limitations on use of specific leaflet layers may bear additional usage restrictions.
 
-With geographic boundaries established and an imagery leaflet layer selected, the next step is to collect a gridwise sample of satelite images to serve as evaluation data for modeling (the area over which to identify and categorize buildings).  The first stage is defining the zoom level for the images to be captured.  Each leaflet image layer has a fixed maximum zoom limit.  This is generally the maximum useful zoom level to maintain resolution. 
+With geographic boundaries established and an imagery leaflet layer selected, the next step is to collect a gridwise sample of satellite images to serve as evaluation data for modeling (the area over which to identify and categorize buildings).  The first stage is defining the zoom level for the images to be captured.  Each leaflet image layer has a fixed maximum zoom limit.  This is generally the maximum useful zoom level to maintain resolution. 
 
 > Though I am no expert in digital photography, one can think of this like older digital cameras - users can zoom in physically (the lenses on the camera move) without sacrificing the quality of the image captured.  Digital zoom can extend this range (the lenses no longer move), but the image resolution is compromised... the camera effectively "stretches" the pixels it reads to fill the desired frame.  This is also how 'pinch to zoom' works on smartphone cameras.
 
-Here the maximum zoom level is selected (18 for Google Satelite Imagery) to maximize pixel density over a small area.
+Here the maximum zoom level is selected (18 for Google Satellite Imagery) to maximize pixel density over a small area.
 
 A frame size of 320x320 pixels is used for the images captured.  This may seem small, but this is chosen for three purposes:
 1. Convolutional Neural networks are generally well suited for smaller images - this project also aims to identify individual buildings from the image.  Tuning the size of the images into digestable chunks is hypothesized to yield better accuracy and model performance (it is likely to find 10 houses from a small image than 100 houses in a larger image)
@@ -157,15 +157,15 @@ Furthermore, images must be captured in two overlapping grids to maximize the in
 <div style="text-align:center;">
     <figure>
         <img src=images/grid1.png alt='Initial Grid Capture'><br>
-        <figcaption>1. Primary images are captured to create a grid covering the island boundaries within the maximun defined extents (cardinal directions) of the island.  Representative primary images boundaries are roughly identified by blue boxes.</figcaption>
+        <figcaption>1. Primary images are captured to create a grid covering the island boundaries within the maximun defined extents (cardinal directions) of the island.  Representative primary images boundaries are roughly identified by blue boxes.</figcaption><br>
     </figure>
     <figure>
         <img src=images/grid2.png width='400' height='400' alt='Secondary Grid Capture'><br>
-        <figcaption>2. A secondary grid of images are captured within the same boundaries with a one-half width and height offset to the primary grid.  Any buildings which were divided into multiple images in the primary grid are captured entirely within one image on the secondary grid.  Representative primary images boundaries are roughly identified by orange boxes.</figcaption>
+        <figcaption>2. A secondary grid of images are captured within the same boundaries with a one-half width and height offset to the primary grid.  Any buildings which were divided into multiple images in the primary grid are captured entirely within one image on the secondary grid.  Representative primary images boundaries are roughly identified by orange boxes.</figcaption><br>
     </figure>
     <figure>
         <img src=images/grid_coastline.png width=400 alt='Coastline Control During Grid Capture'><br>
-        <figcaption>3. Geographic Boundary Control - As each section of the grid is instantiated, the geographic boundary is considered prior to image capture.  Here the coastline is represented by a dashed green line.  If the center of the grid falls inside the geographic boundary (a closed shape), the image is captured.  Otherwise the image is skipped and the process moves to the next grid point.</figcaption>
+        <figcaption>3. Geographic Boundary Control - As each section of the grid is instantiated, the geographic boundary is considered prior to image capture.  Here the coastline is represented by a dashed green line.  If the center of the grid falls inside the geographic boundary (a closed shape), the image is captured.  Otherwise the image is skipped and the process moves to the next grid point.</figcaption><br>
     </figure>
 </div><br>
     
@@ -177,19 +177,19 @@ Capturing each image requires five steps, accomplished in a single function:
 4. Call the imgkit library to read the html object and save the output as a .png file
 5. Delete the temporary HTML file to save space.
 
-Using the above process, thousands of high quality, relevant satelite and aerial images of consistent size and are captured quickly and available for modeling.  Some examples are below:
+Using the above process, thousands of high quality, relevant satellite and aerial images of consistent size and are captured quickly and available for modeling.  Some examples are below:
 <div style="text-align:center;">
     <figure>
         <img src=images/39.70193999999998_19.71912999999999_sat.png width=400 alt='Hamlet, Agros'><br>
-        <figcaption>Farming Hamlet - Agros, Corfu</figcaption>
+        <figcaption>Farming Hamlet - Agros, Corfu</figcaption><br>
     </figure>
     <figure>
         <img src=images/39.70433999999997_19.69832999999999_sat.png width=400 alt='Chorepiskopi Town'><br>
-        <figcaption>Chorepiskopi</figcaption>
+        <figcaption>Chorepiskopi</figcaption><br>
     </figure>
     <figure>
         <img src=images/39.70206892455841_19.718180550436898_sat.png width=400 alt='Agros, Agros'><br>
-        <figcaption>Agros, Corfu</figcaption>
+        <figcaption>Agros, Corfu</figcaption><br>
     </figure>
 </div><br>
 
@@ -207,12 +207,12 @@ The goal of this project is to leverage the images captured above to identify in
         - Convolutional Neural Networks introduce <i>Convolution Layers</i> to a Neural Network.  These layers enable the model to assess arrays of numbers (often images) organized in multiple dimensions.  Boiled down, Convolution Layers 'look at' a small subset of the 'image' similar to the gridwise image capture approach above and calculate ouptputs to create a new representation of the input data.  One key feature is that these layers enable the network to identify features of an input without respect to their position.  Convolutional Neural Networks are the cornerstone of computer vision in applications like image classification (cat or dog?), object detection (lines on the road in self driving cars), and instance segmentation (identifying and reading a roadsign).<br><br>
 </blockquote>
 
-<a href="https://github.com/matterport/Mask_RCNN">Mask-RCNN</a> is a pre-trained Convolutional Neural Network used for Instance Segmentation.  One guiding principle of Neural Networks is that as the rules you are attempting to learn grow in complexity, the amount of data needed to train the model increases as well.  Mask-RCNN has been trained on a range of very large datasets, which enable it to break down input images efficiently and identify instances of objects.  It can also be retrained to find new 'classes' of objects (like buildings) reasonably quickly - as the internal rules of breaking down an image have already been learned.  This makes Mask-RCNN a great model to leverage when seeking to identify individual houses from satelite imagery! <br><br>
+<a href="https://github.com/matterport/Mask_RCNN">Mask-RCNN</a> is a pre-trained Convolutional Neural Network used for Instance Segmentation.  One guiding principle of Neural Networks is that as the rules you are attempting to learn grow in complexity, the amount of data needed to train the model increases as well.  Mask-RCNN has been trained on a range of very large datasets, which enable it to break down input images efficiently and identify instances of objects.  It can also be retrained to find new 'classes' of objects (like buildings) reasonably quickly - as the internal rules of breaking down an image have already been learned.  This makes Mask-RCNN a great model to leverage when seeking to identify individual houses from satellite imagery! <br><br>
         Mask-RCNN's output when considering an image of a street below provides an illustration of both instance identification (individual boxes for instances of each type of object identified) and masking (the highlight overlay of the pixels that make up each object.)
 <div style="text-align:center;">        
     <figure>
         <img src=https://github.com/matterport/Mask_RCNN/raw/master/assets/street.png width=600 alt = "Matterport Mask-RCNN Street View"><br>
-        <figcaption>Sample Mask-RCNN Output.  Credit: Matterport.  <a hreff = "https://github.com/matterport/Mask_RCNN"> Source Link</a></figcaption>
+        <figcaption>Sample Mask-RCNN Output.  Credit: Matterport.  <a hreff = "https://github.com/matterport/Mask_RCNN"> Source Link</a></figcaption><br>
     </figure>
 </div><br>
 
@@ -222,12 +222,12 @@ One note is that Mask-RCNN is not directly compatible with the current versions 
 ---
 ### Source and Prepare Training Data
 
-[Notebook](code/04_Training_Data.ipynb)
+[Notebook](code/03_Training_Data.ipynb)
 
 #### Sourcing
 Machine Learning models make predictions on a like-for-like basis with the answers ("targets") they were trained on.  A model asked to predict a house price will need to be trained with house prices as a target.  A model trained to identify pictures of cats vs. dogs will need to be trained on labeled images of cats and dogs (and because the task is more complex, a lot more photos.).  This project seeks to generate masks (the highlighted sections) which comprise buildings from aerial photos.  Therefore, a dataset comprised of aerial images and <i>individual building masks</i> will be required for training.  Thankfully, this data is publicly available from Spacenet.ai.
 
-Spacenet V2 is a publicly available dataset from [Spacenet.ai](https://spacenet.ai/about-us/).  This data is commonly used in Spacenet-operated geospatial machine learning challenges similar to those operated on kaggle.com.  The Spacenet V2 [dataset](https://spacenet.ai/spacenet-buildings-dataset-v2/) covers four cities and provides maps of category-masked images, including maps for buildings viewed from satelite photography.  This data is ideal to train a Convolutional Neural Network to identify, locate and mask individual buildings for this project.
+Spacenet V2 is a publicly available dataset from [Spacenet.ai](https://spacenet.ai/about-us/).  This data is commonly used in Spacenet-operated geospatial machine learning challenges similar to those operated on kaggle.com.  The Spacenet V2 [dataset](https://spacenet.ai/spacenet-buildings-dataset-v2/) covers four cities and provides maps of category-masked images, including maps for buildings viewed from satellite photography.  This data is ideal to train a Convolutional Neural Network to identify, locate and mask individual buildings for this project.
 
 Spacenet V2 data is available for download via Amazon S3 bucket or from [Radiant MLHUB](https://mlhub.earth/data/spacenet2).  For this project, I downloaded the Khartoum dataset from Radiant MLHUB.  It is the smallest of the four available datasets, which enables faster training times in line with the time constraints for this project.  Examples of the pre-processed images are below.
 
@@ -253,7 +253,7 @@ It consists of cropped images, nDSMs, and roof elements including three classes 
 <div style="text-align:center;">        
     <figure>
         <img src=images/loosgagnet_roofline.png><img src = images/loosgagnet_roofline_mask.png><br>
-        <figcaption>loosgagnet Roofline Extraction - images processed for this project</figcaption>
+        <figcaption>loosgagnet Roofline Extraction - images processed for this project</figcaption><br>
     </figure>
 </div><br>
     
@@ -262,7 +262,8 @@ Citation: Fatemeh Alidoost, Hossein Arefi, Federico Tombari; “2D Image-To-3D M
 </blockquote>
 
 #### Pre-Processing SpacenetV2 Data
-SpacenetV2 Data is available in tar.gz files for each city.  Once extracted, the data requires significant pre-processing before being leveraged in modeling.  Details of the cleaning process are provided below and handled sequentially in the linked [notebook](code/04_Training_Data.ipynb).  Mustafa Aktas' <a href='https://github.com/Mstfakts/Building-Detection-MaskRCNN/tree/master'>Building Detection with MaskRCNN project on github</a> is leveraged as reference on starting approaches to some of the problems tacked during data preparation and model instantiation.  Many thanks to Mustafa for blazing this trail!
+
+SpacenetV2 Data is available in tar.gz files for each city.  Once extracted, the data requires significant pre-processing before being leveraged in modeling.  Details of the cleaning process are provided below and handled sequentially in the linked [notebook](code/03_Training_Data.ipynb).  Mustafa Aktas' <a href='https://github.com/Mstfakts/Building-Detection-MaskRCNN/tree/master'>Building Detection with MaskRCNN project on github</a> is leveraged as reference on starting approaches to some of the problems tacked during data preparation and model instantiation.  Many thanks to Mustafa for blazing this trail!
 
 ##### File Organization
 Initial file directories are laid out such that images and image labels are stored in separate directories for each image. Ex. img1 (multiple images) and img1-labels (geojson) are stored individually in unique directories.  Within each image file directory, there are four distinct image bands or types (all in 16 bit .tif format) MS, PAN, PS-MS, PS-RGB
@@ -279,7 +280,7 @@ Labels (building masks) are stored as .geojson objects - these will need to be r
 <div style="text-align:center;">
     <figure>
         <img src=images/img1002PS-RGB_.png width=400 alt="SpacenetV2 Image 1002"> <img src=images/1002mask_.png width= 400 alt = 'SpacenetV2 Image 1002 Combined Mask'>
-        <figcaption>SpacenetV2 Khartoum Image 1002 and matching mask for all combined buildings (sourced from geojson)</figcaption>
+        <figcaption>SpacenetV2 Khartoum Image 1002 and matching mask for all combined buildings (sourced from geojson)</figcaption><br>
     </figure>
 </div><br>
 
@@ -290,7 +291,7 @@ Image files are provided in a 16-bit .tif format.  These are not directly viewab
 
 ---
 ### Modeling
-[Notebook](code/05_Building_Detection.ipynb)
+[Notebook](code/04_Building_Detection.ipynb)
 
 As stated above, this project leverages the Mask-RCNN pre-trained model, led by Waleed Abdulla and originally poblished on [github].  This model is adept at identifying instances of defined and trained object classes (ex. person, car, balloon, etc.).  Identified instances are fitted with a boundary box and a pixel-wise mask which can be overlaid on the original image to highlight the pixels found to make up the object instance.
 
@@ -320,7 +321,7 @@ The result of this code is a stack of binary arrays with the following dimension
         <img src=images/multi-mask356k.png alt='Khartoum 356'>
         <img src=images/multi-mask911k.png alt='Khartoum 911'>
         <img src=images/multi-mask814k.png alt='Khartoum 814'><br>
-        <figcaption>Images and Associated Masks for a sample of Khartoum Buildings</figcaption>
+        <figcaption>Images and Associated Masks for a sample of Khartoum Buildings</figcaption><br>
     </figure>
 </div><br>
 
@@ -347,7 +348,7 @@ Following 18 epochs of of training using SpacenetV2 data (trainig the model 'hea
     <figure>
         <img src=images/validation_actual.png alt = 'SpacenetV2 Validation Image - Known Mask', width=300> <img src=images/validation_predicted.png alt='SpacenetV2 Validation Image - Predicted Building Masks' width = 300><br>
         <img src=images/validation_actual_2.png alt = 'SpacenetV2 Validation Image - Known Mask', width=300> <img src=images/validation_predicted_2.png alt='SpacenetV2 Validation Image - Predicted Building Masks' width = 300><br>
-        <figcaption>Actual (left) and Predicted (right) Building Instances from SpaceNetV2 Images</figcaption>
+        <figcaption>Actual (left) and Predicted (right) Building Instances from SpaceNetV2 Images</figcaption><br>
     </figure>
 </div><br>
 
@@ -361,14 +362,14 @@ Tensorflow requires access to GPUs to function properly.  As I do not have a GPU
 #### Building Locations
 Leveraging the prediction outputs from the Mask-RCNN model, it is possible to identify and map the center of each predicted building to a geographic location (in concert with data stored in the image file name.).  This is accomplished by identifying the center of the bounding box predicted by the model for each predicted object.  Effectively, the minimum and maximum x and y values are leveraged to calculate the center point of the detected object.  Note: this is not the centroid of the mask object, but the average x-y extent of the identified object.  This is expected to be more accurate, given the shape of the mask objects predicted may not exactly match the shape of the building structure.
 
-As the x, y coordinates are zero-indexed at the bottom-left corner of each image and calculated as pixels, the coordinates are mapped to the image geolocation using the following logic (see [here](code/05_Building_Detection.ipynb###-model-results-examination) for details.):
+As the x, y coordinates are zero-indexed at the bottom-left corner of each image and calculated as pixels, the coordinates are mapped to the image geolocation using the following logic (see [here](code/04_Building_Detection.ipynb###-model-results-examination) for details.):
 1. The x and y coordinates are dividided by the image size (320), resulting in a 0-1 range for each coordinate
 2. 0.5 is subtracted from each coordinate, shifting the plane to the center.  Now the bottom left corner (0,0) is cacluated as (-0.5, -0.5)
 3. Coordinates are multiplied by the scale factor between the image and geography (0.0017, 0.00128).  This is calculated manually during the image capture process.
 4. Finally, the Longitude, Latitude stored in the image filename at capture is added to the x and y coordinates, respectively to identify the geolocation of buildings in the same map projection as the one used to capture the image.
 
 #### Building Roof Colors
-Leveraging the mask object generated for each predicted building, it is possible to identify the average color of the image area which overlaps the building mask.  In effect, this returns a color family for the roof of identified buildings.  This is accomplished using the following logic flow in the extract_roof_color function (see [here](code/05_Building_Detection.ipynb###-model-results-examination) for details.):
+Leveraging the mask object generated for each predicted building, it is possible to identify the average color of the image area which overlaps the building mask.  In effect, this returns a color family for the roof of identified buildings.  This is accomplished using the following logic flow in the extract_roof_color function (see [here](code/04_Building_Detection.ipynb###-model-results-examination) for details.):
 1. The individual building masks are isolated and processed in a loop (multiple building masks are expected to be generated from each image).  Here, each mask is stored as a (W x H) array where pixels covered by the mask are 1, other pixels are 0.
 2. A copy of the original image (stored as a (W x H x 3) array) is created.  Here the color bands for Red, Green, and Blue are separated into stacked arrays, all with the same height and width as the image.
 3. For each color channel (red, green, blue), the image mask array is multiplied by the color channel array.  The result is 0 across red, green, and blue channels for all pixels where the mask does not overlap.  Where the mask does overlap with the image, the original image is retained.
@@ -387,7 +388,7 @@ This project shows that it is feasible to leverage publicly available imagery an
  - General Assembly Data Science Immersive Instructional Team (Tim Book, Katie Sylvia, Rowan Schaefer) - Thank you for your guidance througout this project
  - [Google's Earth Engine Colab Setup Guide](https://colab.research.google.com/github/google/earthengine-api/blob/master/python/examples/ipynb/ee-api-colab-setup.ipynb)
  - [leaflet providers on Github on available map layers](http://leaflet-extras.github.io/leaflet-providers/preview/)
- - [Geemap Library Community on Google Satelite Imagery](https://github.com/gee-community/geemap/blob/master/geemap/basemaps.py)
+ - [Geemap Library Community on Google Satellite Imagery](https://github.com/gee-community/geemap/blob/master/geemap/basemaps.py)
  - [Jarekk on imgkit image sizing](https://github.com/jarrekk/imgkit/issues/18#issuecomment-359372163)
  - [Geodata.gov.gr](https://geodata.gov.gr/en/dataset/aktogramme/resource/1ba9f74e-eb7a-4d0d-8858-864218806dbc)
  - [Geodata.gov.gr](https://geodata.gov.gr/en/dataset/oria-demon-kapodistriakoi)
@@ -415,3 +416,8 @@ This project shows that it is feasible to leverage publicly available imagery an
  - [Mask-RCNN Issue Board on mini-mask usage](https://github.com/matterport/Mask_RCNN/issues/1967#issuecomment-796687115)
  - [Github User Avinash-218 on likely causes of Mask-RCNN Modeling issues with Tensorflow 2.6+](https://github.com/matterport/Mask_RCNN/issues/2684#issuecomment-1621635909)
  - [Jonathan Hui via Medium on mAP Metrics](https://jonathan-hui.medium.com/map-mean-average-precision-for-object-detection-45c121a31173)
+ 
+Inspiration
+ - [CNN BASED DETECTION OF BUILDING ROOFS FROM HIGH RESOLUTION SATELLITE IMAGES by Liu Hang, Guoyin Cai](https://isprs-archives.copernicus.org/articles/XLII-3-W10/187/2020/isprs-archives-XLII-3-W10-187-2020.pdf)
+ - [Kim J, Bae H, Kang H, Lee SG. CNN Algorithm for Roof Detection and Material Classification in Satellite Images. Electronics. 2021; 10(13):1592. https://doi.org/10.3390/electronics10131592](https://www.mdpi.com/2079-9292/10/13/1592)
+ - [Procedural Roof Generation From a Single Satellite Image by Xiaowei Zhang and Daniel Aliaga](https://diglib.eg.org/bitstream/handle/10.1111/cgf14472/v41i2pp249-260.pdf)
